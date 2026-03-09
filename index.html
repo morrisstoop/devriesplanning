@@ -145,11 +145,11 @@
   .sug-marge { font-size:14px; font-weight:800; font-family:monospace; }
   .sug-marge.pos { color:#2ed573; }
   .sug-marge.neg { color:#ff4757; }
-  .tp-card { background:#1e2235; border-radius:8px; padding:8px 10px; border-left:3px dashed #ffa502; cursor:pointer; }
-  .tp-card:hover { background:#252940; }
-  .tp-naam { font-size:11px; font-weight:700; color:#fff; }
-  .tp-info { font-size:10px; color:#888; }
-  .tp-omzet { font-size:11px; color:#2ed573; font-weight:700; }
+  .tp-card { background:#1e2235; border-radius:8px; padding:8px 10px; border-left:3px solid #ffa502; cursor:pointer; transition:all 0.15s; }
+  .tp-card:hover { background:#252940; transform:translateX(2px); }
+  .tp-naam { font-size:12px; font-weight:700; color:#fff; }
+  .tp-info { font-size:10px; color:#888; line-height:1.4; }
+  .tp-omzet { font-size:12px; color:#2ed573; font-weight:700; }
   .filter-row { display:flex; flex-wrap:wrap; gap:4px; }
   .filter-pill { padding:4px 10px; border-radius:12px; font-size:10px; font-weight:600; background:#252940; color:#888; border:1px solid transparent; cursor:pointer; }
   .filter-pill.active { background:#2d3150; color:#fff; border-color:#e8712a; }
@@ -292,21 +292,31 @@
 </head>
 <body>
 <div class="tab-bar">
-  <button class="tab-btn active" data-tab="heatmap" onclick="switchTab('heatmap')">🗺 Heatmap & Dagplanner</button>
+  <button class="tab-btn active" data-tab="heatmap" onclick="switchTab('heatmap')">🗺 Dagplanner</button>
   <button class="tab-btn" data-tab="planner" onclick="switchTab('planner')">📅 Weekplanner <span class="tab-badge" id="tpBadge">31</span></button>
-  <div class="tab-right">De Vries Isolatietechniek · Splandid Export 06-03-2026</div>
+  <button class="tab-btn" data-tab="oaprijzen" onclick="switchTab('oaprijzen')">💰 OA Prijzen</button>
+  <button class="tab-btn" data-tab="vloot" onclick="switchTab('vloot')">🚐 Vloot</button>
+  <button class="tab-btn" data-tab="teams" onclick="switchTab('teams')">👥 Teams</button>
+  <button class="tab-btn" data-tab="config" onclick="switchTab('config')">⚙ Invoerdata</button>
+  <div class="tab-right">De Vries Isolatietechniek · 09-03-2026</div>
 </div>
 <div id="heatmapWrap">
 <div id="app">
   <div class="left-panel" id="leftPanel">
     <div><div class="lp-title">Dagplanner & Marge</div><div class="lp-sub">PLANNING · KOSTEN · MARGE</div></div>
     <div class="dp-klus">
-      <div class="dp-klus-title">Klus 1</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="dp-klus-title">Klus 1</div>
+        <label style="font-size:9px;color:#888;cursor:pointer;display:flex;align-items:center;gap:4px;">
+          <input type="checkbox" id="dpMulti1" onchange="toggleMultiIso(1)" style="accent-color:#e8712a;"> 2 isolatietypes
+        </label>
+      </div>
       <input type="text" class="dp-input" id="dpCity1" placeholder="Stad of postcode" style="margin-bottom:4px;">
       <div style="display:flex;gap:4px;margin-bottom:4px;">
         <input type="number" class="dp-input" id="dpOmzet1" placeholder="Omzet €" style="flex:1;">
         <select class="dp-select" id="dpDTD1" style="width:75px;"><option value="nee">Niet-DTD</option><option value="ja">DTD</option></select>
       </div>
+      <div style="font-size:9px;color:#2ed573;font-weight:700;margin:4px 0 2px;">ISOLATIE A</div>
       <div style="display:flex;gap:4px;">
         <select class="dp-select" id="dpCat1" style="flex:1;min-width:0;overflow:hidden;" onchange="updateDikteOptions('dpCat1','dpDikte1')">
           <option value="">Type klus</option>
@@ -340,6 +350,23 @@
       <select class="dp-select" id="dpDikte1" style="margin-top:4px;font-size:10px;">
         <option value="">Kies eerst type klus</option>
       </select>
+      <div id="dpMultiWrap1" style="display:none;margin-top:6px;padding-top:6px;border-top:1px dashed #3a3e52;">
+        <div style="font-size:9px;color:#e8712a;font-weight:700;margin-bottom:2px;">ISOLATIE B (zelfde adres)</div>
+        <div style="display:flex;gap:4px;">
+          <select class="dp-select" id="dpCat1b" style="flex:1;min-width:0;overflow:hidden;" onchange="updateDikteOptions('dpCat1b','dpDikte1b')">
+            <option value="">Type klus B</option>
+            <optgroup label="Bodemisolatie"><option value="Bodem - Chips">Bodem Chips</option><option value="Bodem - EPS Parels">Bodem EPS Parels</option><option value="Bodem - XXL Parels">Bodem XXL Parels</option></optgroup>
+            <optgroup label="Vloerisolatie"><option value="Vloer - PIF Floor">Vloer PIF Floor</option><option value="Vloer - Knauf 035">Vloer Knauf 035</option></optgroup>
+            <optgroup label="Spouwmuurisolatie"><option value="Spouw - EPS Parels">Spouw EPS Parels</option><option value="Spouw - Glaswol">Spouw Glaswol</option><option value="Spouw - EnveriFoam">Spouw EnveriFoam</option></optgroup>
+            <optgroup label="Dakisolatie"><option value="Dakis - PIF Roof">Dak PIF Roof</option><option value="Dakis - Knauf Naturoll">Dak Knauf Naturoll</option><option value="Dakis - Gramitherm">Dak Gramitherm</option><option value="Dakis - PIR + Gips">Dak PIR + Gips</option><option value="Dakis - PIR Recticel">Dak PIR Recticel</option></optgroup>
+            <optgroup label="Plafondisolatie"><option value="Plafo - Cellulose">Plafond Cellulose</option></optgroup>
+          </select>
+          <input type="number" class="dp-input" id="dpM1b" placeholder="m²" style="width:75px;flex-shrink:0;">
+        </div>
+        <select class="dp-select" id="dpDikte1b" style="margin-top:4px;font-size:10px;">
+          <option value="">Kies eerst type klus B</option>
+        </select>
+      </div>
       <select class="dp-select" id="dpExtra1" style="margin-top:4px;font-size:10px;">
         <option value="0|0">Geen extra werkzaamheden</option>
         <option value="1.0|0">Graven fundering geen klei (+1,0u)</option>
@@ -376,12 +403,18 @@
       </select>
     </div>
     <div class="dp-klus" style="border-left-color:#4dabf7;">
-      <div class="dp-klus-title" style="color:#4dabf7;">Klus 2 (optioneel)</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="dp-klus-title" style="color:#4dabf7;">Klus 2 (optioneel)</div>
+        <label style="font-size:9px;color:#888;cursor:pointer;display:flex;align-items:center;gap:4px;">
+          <input type="checkbox" id="dpMulti2" onchange="toggleMultiIso(2)" style="accent-color:#4dabf7;"> 2 isolatietypes
+        </label>
+      </div>
       <input type="text" class="dp-input" id="dpCity2" placeholder="Stad of postcode" style="margin-bottom:4px;">
       <div style="display:flex;gap:4px;margin-bottom:4px;">
         <input type="number" class="dp-input" id="dpOmzet2" placeholder="Omzet €" style="flex:1;">
         <select class="dp-select" id="dpDTD2" style="width:75px;"><option value="nee">Niet-DTD</option><option value="ja">DTD</option></select>
       </div>
+      <div style="font-size:9px;color:#4dabf7;font-weight:700;margin:4px 0 2px;">ISOLATIE A</div>
       <div style="display:flex;gap:4px;">
         <select class="dp-select" id="dpCat2" style="flex:1;min-width:0;overflow:hidden;" onchange="updateDikteOptions('dpCat2','dpDikte2')">
           <option value="">Type klus</option>
@@ -415,6 +448,23 @@
       <select class="dp-select" id="dpDikte2" style="margin-top:4px;font-size:10px;">
         <option value="">Kies eerst type klus</option>
       </select>
+      <div id="dpMultiWrap2" style="display:none;margin-top:6px;padding-top:6px;border-top:1px dashed #3a3e52;">
+        <div style="font-size:9px;color:#e8712a;font-weight:700;margin-bottom:2px;">ISOLATIE B (zelfde adres)</div>
+        <div style="display:flex;gap:4px;">
+          <select class="dp-select" id="dpCat2b" style="flex:1;min-width:0;overflow:hidden;" onchange="updateDikteOptions('dpCat2b','dpDikte2b')">
+            <option value="">Type klus B</option>
+            <optgroup label="Bodemisolatie"><option value="Bodem - Chips">Bodem Chips</option><option value="Bodem - EPS Parels">Bodem EPS Parels</option><option value="Bodem - XXL Parels">Bodem XXL Parels</option></optgroup>
+            <optgroup label="Vloerisolatie"><option value="Vloer - PIF Floor">Vloer PIF Floor</option><option value="Vloer - Knauf 035">Vloer Knauf 035</option></optgroup>
+            <optgroup label="Spouwmuurisolatie"><option value="Spouw - EPS Parels">Spouw EPS Parels</option><option value="Spouw - Glaswol">Spouw Glaswol</option><option value="Spouw - EnveriFoam">Spouw EnveriFoam</option></optgroup>
+            <optgroup label="Dakisolatie"><option value="Dakis - PIF Roof">Dak PIF Roof</option><option value="Dakis - Knauf Naturoll">Dak Knauf Naturoll</option><option value="Dakis - Gramitherm">Dak Gramitherm</option><option value="Dakis - PIR + Gips">Dak PIR + Gips</option><option value="Dakis - PIR Recticel">Dak PIR Recticel</option></optgroup>
+            <optgroup label="Plafondisolatie"><option value="Plafo - Cellulose">Plafond Cellulose</option></optgroup>
+          </select>
+          <input type="number" class="dp-input" id="dpM2b" placeholder="m²" style="width:75px;flex-shrink:0;">
+        </div>
+        <select class="dp-select" id="dpDikte2b" style="margin-top:4px;font-size:10px;">
+          <option value="">Kies eerst type klus B</option>
+        </select>
+      </div>
       <select class="dp-select" id="dpExtra2" style="margin-top:4px;font-size:10px;">
         <option value="0|0">Geen extra werkzaamheden</option>
         <option value="1.0|0">Graven fundering geen klei (+1,0u)</option>
@@ -458,7 +508,40 @@
 </div>
 
 <script>
-const HW = { lat: 52.3874, lon: 4.7454 };
+// CENTRALE CONFIGURATIE — alle aanpasbare parameters
+// =============================================
+const CONFIG_DEFAULTS = {
+  uurtarief_pp: 37.50, personen_per_team: 2,
+  rijfactor: 1.3, snelheid: 65, brandstof_per_km: 0.20,
+  loodstijd_uur: 0.75,
+  dtd_commissie: 0.27, schouw_commissie: 0.035,
+  kostenmarge_pct: 0.05, oa_kostprijs_pct: 0.533,
+  start_uur: 7.00, vertrek_uur: 7.75, max_terugkomst: 17.00, beschikbare_uren: 9.25,
+  t_factor: 1.75, hw_lat: 52.3867, hw_lon: 4.7356,
+};
+const _saved = (() => { try { return JSON.parse(localStorage.getItem('dvConfig') || '{}'); } catch(e) { return {}; } })();
+const CONFIG = {
+  ...CONFIG_DEFAULTS,
+  ..._saved,
+  get uurtarief() { return this.uurtarief_pp * this.personen_per_team; },
+};
+function saveConfig() {
+  const toSave = {};
+  for (const k of Object.keys(CONFIG_DEFAULTS)) {
+    if (CONFIG[k] !== CONFIG_DEFAULTS[k]) toSave[k] = CONFIG[k];
+  }
+  try { localStorage.setItem('dvConfig', JSON.stringify(toSave)); } catch(e) {}
+}
+function onConfigChanged() {
+  const p = document.getElementById('configPanel');
+  if (p) p.dataset.built = '';
+  buildConfigTab();
+  const dpBtn = document.getElementById('dpCalcBtn');
+  const dpRes = document.getElementById('dpResult');
+  if (dpBtn && dpRes && dpRes.innerHTML.trim() !== '') dpBtn.click();
+}
+
+const HW = { get lat() { return CONFIG.hw_lat; }, get lon() { return CONFIG.hw_lon; } };
 const R=[{"s":"IJmuiden","la":52.4583,"lo":4.6111,"k":65,"o":94904},{"s":"Haarlem","la":52.3813,"lo":4.6358,"k":53,"o":80417},{"s":"Nieuw-Vennep","la":52.2667,"lo":4.6333,"k":51,"o":94159},{"s":"Bolsward","la":53.0614,"lo":5.5267,"k":50,"o":88042},{"s":"Beverwijk","la":52.4833,"lo":4.6569,"k":47,"o":70038},{"s":"Amsterdam","la":52.3676,"lo":4.9041,"k":40,"o":65074},{"s":"Hoofddorp","la":52.3025,"lo":4.6889,"k":40,"o":76634},{"s":"Alkmaar","la":52.6324,"lo":4.7534,"k":34,"o":52572},{"s":"IJsselmuiden","la":52.5667,"lo":5.9167,"k":28,"o":51482},{"s":"Landsmeer","la":52.4333,"lo":4.9167,"k":25,"o":37962},{"s":"Zaandam","la":52.4383,"lo":4.8261,"k":24,"o":39161},{"s":"Rotterdam","la":51.9244,"lo":4.4777,"k":22,"o":36059},{"s":"Sneek","la":53.0333,"lo":5.6614,"k":22,"o":36763},{"s":"Kampen","la":52.5553,"lo":5.9114,"k":22,"o":44330},{"s":"Velsen-Noord","la":52.4667,"lo":4.6333,"k":21,"o":29623},{"s":"Amstelveen","la":52.3012,"lo":4.8565,"k":19,"o":29831},{"s":"Almere","la":52.3508,"lo":5.2647,"k":19,"o":35118},{"s":"Franeker","la":53.1869,"lo":5.5406,"k":18,"o":29722},{"s":"Heerhugowaard","la":52.6633,"lo":4.8542,"k":18,"o":30391},{"s":"Leiden","la":52.1601,"lo":4.497,"k":17,"o":29397},{"s":"Heemstede","la":52.35,"lo":4.6167,"k":17,"o":29053},{"s":"Uitgeest","la":52.5333,"lo":4.7167,"k":17,"o":27856},{"s":"Drachten","la":53.1122,"lo":6.0989,"k":17,"o":32383},{"s":"Heemskerk","la":52.51,"lo":4.67,"k":15,"o":19732},{"s":"Hoorn","la":52.6417,"lo":5.0594,"k":15,"o":20624},{"s":"Hilversum","la":52.2292,"lo":5.1764,"k":14,"o":18053},{"s":"Utrecht","la":52.0907,"lo":5.1214,"k":14,"o":17606},{"s":"Lelystad","la":52.5185,"lo":5.4714,"k":13,"o":22902},{"s":"Harlingen","la":53.1742,"lo":5.4236,"k":13,"o":23902},{"s":"Amersfoort","la":52.156,"lo":5.3878,"k":12,"o":17033},{"s":"Heiloo","la":52.6,"lo":4.7,"k":12,"o":25403},{"s":"Aalsmeer","la":52.2594,"lo":4.7611,"k":12,"o":24748},{"s":"Dordrecht","la":51.8133,"lo":4.6736,"k":12,"o":18180},{"s":"Purmerend","la":52.505,"lo":4.9597,"k":11,"o":17893},{"s":"Hillegom","la":52.2917,"lo":4.5833,"k":11,"o":22162},{"s":"Zoetermeer","la":52.0667,"lo":4.5,"k":11,"o":19830},{"s":"Zwanenburg","la":52.3667,"lo":4.75,"k":10,"o":15517},{"s":"Uithoorn","la":52.2333,"lo":4.8333,"k":10,"o":16899},{"s":"Zwaag","la":52.6667,"lo":5.0667,"k":10,"o":16236},{"s":"Huizen","la":52.3,"lo":5.2333,"k":9,"o":15844},{"s":"Gouda","la":52.0115,"lo":4.7113,"k":9,"o":13185},{"s":"Den Haag","la":52.0705,"lo":4.3007,"k":9,"o":21777},{"s":"Krommenie","la":52.5,"lo":4.7667,"k":8,"o":18364},{"s":"Katwijk","la":52.2,"lo":4.4,"k":8,"o":12849},{"s":"Baarn","la":52.2117,"lo":5.2875,"k":8,"o":13497},{"s":"Leiderdorp","la":52.1667,"lo":4.5333,"k":8,"o":13759},{"s":"Den Helder","la":52.9533,"lo":4.76,"k":8,"o":10037},{"s":"Alphen a/d Rijn","la":52.1292,"lo":4.6575,"k":8,"o":9571},{"s":"Noordwijk","la":52.2333,"lo":4.4333,"k":8,"o":9667},{"s":"Wassenaar","la":52.15,"lo":4.4,"k":7,"o":11531},{"s":"Emmeloord","la":52.71,"lo":5.75,"k":7,"o":10617},{"s":"IJlst","la":53.0167,"lo":5.6167,"k":7,"o":12084},{"s":"Dronten","la":52.5167,"lo":5.7167,"k":7,"o":12433},{"s":"Eemnes","la":52.25,"lo":5.2667,"k":7,"o":12361},{"s":"Badhoevedorp","la":52.3333,"lo":4.7833,"k":7,"o":9110},{"s":"Bussum","la":52.2667,"lo":5.1667,"k":7,"o":10657},{"s":"Diemen","la":52.34,"lo":4.96,"k":7,"o":13316},{"s":"Blaricum","la":52.2667,"lo":5.25,"k":6,"o":13095},{"s":"Kudelstaart","la":52.2333,"lo":4.75,"k":5,"o":10617},{"s":"Naarden","la":52.2917,"lo":5.1583,"k":5,"o":9378},{"s":"Limmen","la":52.5667,"lo":4.7,"k":5,"o":11036},{"s":"Oostzaan","la":52.4333,"lo":4.8833,"k":5,"o":8890},{"s":"Zandvoort","la":52.3667,"lo":4.5333,"k":5,"o":10698},{"s":"Wijk aan Zee","la":52.5,"lo":4.6,"k":5,"o":10006},{"s":"Swifterbant","la":52.5667,"lo":5.6333,"k":5,"o":7843},{"s":"Spaarndam","la":52.4167,"lo":4.6833,"k":5,"o":8852},{"s":"Loosdrecht","la":52.2,"lo":5.0833,"k":4,"o":6777},{"s":"Putten","la":52.2583,"lo":5.6083,"k":4,"o":5290},{"s":"Heerenveen","la":52.9592,"lo":5.9231,"k":4,"o":10739},{"s":"Lemmer","la":52.8461,"lo":5.7128,"k":4,"o":8069},{"s":"Wormer","la":52.5,"lo":4.8333,"k":4,"o":7896},{"s":"Schoorl","la":52.7,"lo":4.6833,"k":4,"o":6967},{"s":"Leeuwarden","la":53.2012,"lo":5.7999,"k":3,"o":5343},{"s":"Dokkum","la":53.3233,"lo":5.9994,"k":3,"o":3093},{"s":"Castricum","la":52.55,"lo":4.6667,"k":3,"o":7316},{"s":"Schiedam","la":51.9167,"lo":4.4,"k":3,"o":5776},{"s":"Spijkenisse","la":51.85,"lo":4.3333,"k":3,"o":5167},{"s":"Breda","la":51.5719,"lo":4.7683,"k":3,"o":4193},{"s":"Delft","la":52.0116,"lo":4.3571,"k":3,"o":3207},{"s":"Hellevoetsluis","la":51.8333,"lo":4.1333,"k":3,"o":6012},{"s":"Schagen","la":52.7833,"lo":4.8,"k":3,"o":4866},{"s":"Wolvega","la":52.8833,"lo":5.9833,"k":2,"o":3409},{"s":"Kolham","la":53.2,"lo":6.7,"k":2,"o":5499},{"s":"Almelo","la":52.35,"lo":6.6667,"k":2,"o":2323},{"s":"Voorst","la":52.1833,"lo":6.1333,"k":2,"o":4258},{"s":"Urk","la":52.6611,"lo":5.5986,"k":2,"o":3424},{"s":"Rheezerveen","la":52.5,"lo":6.5,"k":2,"o":3877},{"s":"Apeldoorn","la":52.2112,"lo":5.9699,"k":1,"o":2026},{"s":"Harderwijk","la":52.3428,"lo":5.62,"k":1,"o":1195},{"s":"Harkema","la":53.1833,"lo":6.1333,"k":1,"o":1780},{"s":"Diever","la":52.85,"lo":6.3167,"k":1,"o":2070},{"s":"Zwolle","la":52.5168,"lo":6.083,"k":1,"o":1870},{"s":"Tiel","la":51.8833,"lo":5.4333,"k":1,"o":3333},{"s":"Rockanje","la":51.8667,"lo":4.05,"k":1,"o":1437},{"s":"Oosterhout","la":51.65,"lo":4.8667,"k":1,"o":1691},{"s":"Middenmeer","la":52.8,"lo":5.0,"k":1,"o":1709}];
 
 const NL = [[53.47,5.05],[53.44,5.25],[53.43,5.45],[53.41,5.65],[53.38,5.85],[53.35,6.0],[53.33,6.15],[53.33,6.28],[53.32,6.4],[53.3,6.55],[53.25,6.75],[53.22,6.88],[53.18,7.0],[53.15,7.03],[53.08,7.1],[52.95,7.05],[52.85,7.08],[52.65,6.98],[52.48,6.85],[52.38,6.9],[52.22,6.88],[52.08,6.7],[51.97,6.75],[51.95,6.7],[51.92,6.6],[51.87,6.25],[51.87,6.17],[51.82,6.12],[51.78,6.1],[51.74,6.12],[51.68,6.13],[51.62,6.1],[51.56,6.08],[51.5,6.05],[51.44,6.02],[51.38,5.98],[51.32,5.97],[51.26,5.98],[51.2,6.0],[51.14,6.02],[51.08,6.02],[51.02,6.0],[50.97,5.97],[50.92,5.95],[50.87,5.92],[50.83,5.94],[50.76,5.92],[50.754,6.02],[50.76,5.88],[50.78,5.8],[50.8,5.73],[50.84,5.68],[50.87,5.63],[50.9,5.58],[50.95,5.45],[51.0,5.37],[51.05,5.28],[51.1,5.2],[51.15,5.12],[51.2,5.06],[51.25,5.0],[51.3,4.95],[51.35,4.88],[51.38,4.82],[51.4,4.75],[51.42,4.6],[51.44,4.45],[51.42,4.3],[51.4,4.18],[51.38,4.05],[51.37,3.95],[51.38,3.8],[51.38,3.72],[51.42,3.58],[51.45,3.5],[51.5,3.45],[51.55,3.55],[51.58,3.62],[51.6,3.7],[51.65,3.82],[51.68,3.88],[51.72,3.78],[51.75,3.68],[51.78,3.62],[51.8,3.6],[51.82,3.65],[51.85,3.85],[51.88,3.95],[51.9,4.05],[51.92,4.12],[51.98,4.1],[52.02,4.15],[52.06,4.22],[52.08,4.25],[52.12,4.27],[52.17,4.35],[52.23,4.4],[52.27,4.43],[52.35,4.52],[52.42,4.55],[52.46,4.57],[52.53,4.55],[52.58,4.55],[52.63,4.57],[52.68,4.58],[52.72,4.6],[52.75,4.62],[52.8,4.65],[52.85,4.68],[52.9,4.72],[52.93,4.73],[52.95,4.75],[52.97,4.78],[53.0,4.8],[53.05,4.82],[53.12,4.88],[53.17,4.9],[53.25,4.95],[53.35,5.0],[53.4,5.02],[53.47,5.05]];
@@ -488,9 +571,73 @@ let isPanning = false, panSX = 0, panSY = 0, panOX = 0, panOY = 0;
 let W = 900, H = 700;
 
 const OA_LOCS = [
-  { name: "Zeker-Isolatie", la: 52.1275, lo: 5.2861, plaats: "Soesterberg", kleur: "#f368e0" },
-  { name: "Gelijk Isoleren", la: 52.71, lo: 5.75, plaats: "Emmeloord (geschat)", kleur: "#48dbfb" },
+  { name: "Stap Isolatie", la: 52.0116, lo: 4.2292, plaats: "Westland", kleur: "#f368e0", splandid: "Stap Isolatie" },
+  { name: "Isolatietechniek NH", la: 52.66, lo: 4.85, plaats: "Heerhugowaard", kleur: "#48dbfb", splandid: "Isolatietechniek NH" },
+  { name: "Gelijk Isoleren", la: 53.1614, lo: 6.7618, plaats: "Hoogezand", kleur: "#2ed573", splandid: "GelijkIsolaren" },
+  { name: "Wijk Isolatie", la: 52.9945, lo: 6.9509, plaats: "Nieuw-Buinen", kleur: "#ffa502", splandid: "WijkIsolatie" },
+  { name: "Zeker Isolatie", la: 52.30, lo: 5.23, plaats: "Huizen", kleur: "#ff6b81", splandid: "ZekerIsolatie" },
+  { name: "Badr", la: 52.07, lo: 4.30, plaats: "Den Haag", kleur: "#70a1ff", splandid: "Harun Arslan - Badr" },
+  { name: "Maison Maison", la: 52.3867, lo: 4.7356, plaats: "Halfweg", kleur: "#dfe6e9", splandid: "Maison Maison" },
 ];
+
+// OA Prijslijst per m² (excl. BTW) — bron: Dagplanner_Invoerdata.xlsx 09-03-2026
+const OA_PRIJZEN = {
+  'Spouw': {
+    'Wol / Knauf Supafil ≤6cm':       { 'Stap Isolatie':15, 'Isolatietechniek NH':18, 'Gelijk Isoleren':15, 'Wijk Isolatie':16, 'Badr':13 },
+    'EPS Parels ≤6cm':                 { 'Stap Isolatie':15, 'Gelijk Isoleren':15, 'Wijk Isolatie':16, 'Badr':13.5 },
+    'Enverifoam ≤6cm':                 { 'Stap Isolatie':15, 'Gelijk Isoleren':17, 'Wijk Isolatie':16, 'Badr':13.5 },
+    'Plafond inblaas':                 { 'Badr':26 },
+  },
+  'Vloer': {
+    'PIF Floor 35 (60mm)':             { 'Gelijk Isoleren':28.5, 'Wijk Isolatie':35, 'Zeker Isolatie':29 },
+    'PIF Floor 40 (80mm)':             { 'Gelijk Isoleren':29.75, 'Wijk Isolatie':40, 'Zeker Isolatie':32 },
+    'PIF Floor 45 (82mm)':             { 'Gelijk Isoleren':30.5 },
+    'Sprayfoam HFO 80mm':             { 'Gelijk Isoleren':28, 'Wijk Isolatie':30 },
+    'Sprayfoam HFO 100mm':            { 'Gelijk Isoleren':33, 'Wijk Isolatie':36 },
+    'Sprayfoam HFO 120mm':            { 'Gelijk Isoleren':39 },
+    'Tonzon 3 luchtkamer':             { 'Maison Maison':46.87 },
+    'Tonzon 4 luchtkamer':             { 'Maison Maison':60.93 },
+    'Bodemfolie':                      { 'Wijk Isolatie':5, 'Zeker Isolatie':2, 'Maison Maison':13.52 },
+  },
+  'Bodem': {
+    'EPS platen 15cm':                 { 'Stap Isolatie':22.5, 'Isolatietechniek NH':16.9, 'Gelijk Isoleren':20, 'Wijk Isolatie':18 },
+    'EPS platen 20cm':                 { 'Stap Isolatie':25, 'Isolatietechniek NH':18, 'Gelijk Isoleren':22.5, 'Wijk Isolatie':21 },
+    'EPS platen 30cm':                 { 'Isolatietechniek NH':20, 'Wijk Isolatie':24 },
+    'EPS-parels 15cm':                 { 'Zeker Isolatie':18 },
+    'EPS-parels 20cm':                 { 'Zeker Isolatie':21 },
+  },
+  'Dak': {
+    'PIF Roof 35 (105mm)':             { 'Gelijk Isoleren':30.5, 'Wijk Isolatie':40, 'Zeker Isolatie':39 },
+    'PIF Roof 40 (120mm)':             { 'Gelijk Isoleren':32.5, 'Wijk Isolatie':45, 'Zeker Isolatie':42 },
+    'PIF Roof 45 (135mm)':             { 'Gelijk Isoleren':35 },
+    'Supafill / Inblaaswol':           { 'Stap Isolatie':30, 'Gelijk Isoleren':30 },
+    'Knauf Naturoll 035 140mm':        { 'Zeker Isolatie':42.65 },
+    'Knauf Naturoll 035 170mm':        { 'Zeker Isolatie':44.65 },
+    'Gramitherm 140mm':                { 'Wijk Isolatie':50, 'Zeker Isolatie':56 },
+    'Gramitherm 160mm':                { 'Wijk Isolatie':55 },
+    'PIR platen 80mm':                 { 'Gelijk Isoleren':30.5, 'Zeker Isolatie':48 },
+    'PIR Recticel 81mm':               { 'Zeker Isolatie':48 },
+    'Gipsplaten afwerking':            { 'Gelijk Isoleren':65, 'Wijk Isolatie':51.5 },
+    'Agnes Step-One afwerking':        { 'Gelijk Isoleren':60, 'Wijk Isolatie':69.5 },
+  },
+  'Extra': {
+    'Ventilatierooster':               { 'Stap Isolatie':35, 'Isolatietechniek NH':30, 'Gelijk Isoleren':30, 'Wijk Isolatie':45, 'Zeker Isolatie':40 },
+    'Gat hakken / mangat':             { 'Stap Isolatie':250, 'Gelijk Isoleren':250, 'Wijk Isolatie':150, 'Zeker Isolatie':120, 'Maison Maison':160.55 },
+    'Graven fundering (klei)':         { 'Isolatietechniek NH':220, 'Gelijk Isoleren':250, 'Maison Maison':460 },
+    'Graven fundering (zand)':         { 'Isolatietechniek NH':140, 'Maison Maison':321.10 },
+  },
+};
+
+// OA Capaciteiten: welke OA kan welk type werk
+const OA_CAPS = {
+  'Stap Isolatie':        ['Spouw-Wol','Spouw-EPS','Spouw-Enverifoam','Bodem-EPS','Dak-Supafill','Ventilatie','Gat hakken'],
+  'Isolatietechniek NH':  ['Spouw-Wol','Bodem-EPS','Graven','Ventilatie','Gat hakken','Steiger'],
+  'Gelijk Isoleren':      ['Spouw-Wol','Spouw-EPS','Spouw-Enverifoam','Vloer-PIF','Vloer-Sprayfoam','Bodem-EPS','Dak-PIF','Dak-PIR','Dak-Supafill','Dak-Biobased','Ventilatie','Gat hakken','Graven'],
+  'Wijk Isolatie':        ['Spouw-Wol','Spouw-EPS','Spouw-Enverifoam','Vloer-PIF','Vloer-Sprayfoam','Bodem-EPS','Dak-PIF','Dak-Knauf','Dak-Biobased','Ventilatie','Gat hakken','Steiger','Bodemfolie'],
+  'Zeker Isolatie':       ['Vloer-PIF','Bodem-EPS-parels','Dak-PIF','Dak-PIR','Dak-Knauf','Dak-Biobased','Ventilatie','Gat hakken','Bodemfolie'],
+  'Badr':                 ['Spouw-Wol','Spouw-EPS','Spouw-Enverifoam','Plafond inblaas'],
+  'Maison Maison':        ['Vloer-Tonzon','Kruipruimte','Bodemfolie','Gat hakken','Graven'],
+};
 
 // Postcode lookup: [4-digit PC, stad, lat, lon]
 const PC_LOOKUP = [
@@ -586,10 +733,10 @@ function buildSidebar() {
           '<span style="color:#ff4757;">— —</span> DTD: <b>'+d+'</b></div>';
       })()}
     </div>
-    <div class="section-label">Onderaannemer</div>
+    <div class="section-label">Onderaannemers</div>
     <div class="dir-card" id="oaToggle" style="border-color:${showOA?'#f368e0':'transparent'};${showOA?'background:#2d3150':''}">
-      <div class="dir-name" style="color:${showOA?'#f368e0':'#fff'}">◆ Soesterberg</div>
-      <div class="dir-sub">Toon/verberg locatie</div>
+      <div class="dir-name" style="color:${showOA?'#f368e0':'#fff'}">◆ Toon onderaannemers (${OA_LOCS.length})</div>
+      <div class="dir-sub">${OA_LOCS.map(o=>'<span style="color:'+o.kleur+'">●</span> '+o.name).join(' · ')}</div>
     </div>
     <div class="section-label">Break-even per categorie</div>
     <div style="display:flex;flex-wrap:wrap;gap:4px;" id="catGrid">
@@ -725,11 +872,11 @@ function buildSidebar() {
   document.getElementById("searchBtn").addEventListener("click", doSearch);
   document.getElementById("searchInput").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
 
-  // T-factor calculator
-  const RIJFACTOR = 1.25;
-  const SNELHEID = 80;
-  const UURTARIEF_TEAM = 75; // 2 × €37.50
-  const DIESEL_PER_KM = 0.20; // €2/L × 0.10 L/km
+  // T-factor calculator — waarden uit CONFIG
+  const RIJFACTOR = CONFIG.rijfactor;
+  const SNELHEID = CONFIG.snelheid;
+  const UURTARIEF_TEAM = CONFIG.uurtarief;
+  const DIESEL_PER_KM = CONFIG.brandstof_per_km;
 
   function hemelsbrede(la1, lo1, la2, lo2) {
     return Math.sqrt((la2-la1)**2 * 111*111 + (lo2-lo1)**2 * 67*67);
@@ -930,53 +1077,6 @@ function render() {
     svg.appendChild(t);
   });
 
-  // OA Break-even circles (dynamic per category)
-  const curBE = CAT_BE[activeCat || 'Alle'];
-  const beColor = activeCat ? CAT_COLORS[activeCat] : null;
-  
-  // Niet-DTD circle
-  if (curBE.ndtd > 0 && curBE.ndtd < 200) {
-    const ndtdR = kmToPx(curBE.ndtd);
-    if (ndtdR >= 8 && ndtdR <= Math.max(W,H)*3) {
-      svg.appendChild(svgEl("circle", { cx:hx, cy:hy, r:ndtdR, fill:"rgba(46,213,115,0.04)", stroke: beColor || "#2ed573", "stroke-width":2.5, "stroke-dasharray":"10,5", opacity:0.8 }));
-      const lbl1 = svgEl("text", { x:hx, y:hy-ndtdR-8, fill: beColor || "#2ed573", "font-size":10, "font-weight":800, "text-anchor":"middle" });
-      lbl1.textContent = "Niet-DTD klussen: buiten " + curBE.ndtd + " km is een onderaannemer rendabeler";
-      svg.appendChild(lbl1);
-    }
-  }
-  
-  // DTD circle
-  if (curBE.dtd > 0 && curBE.dtd < 200) {
-    const dtdR = kmToPx(curBE.dtd);
-    if (dtdR >= 8 && dtdR <= Math.max(W,H)*3) {
-      svg.appendChild(svgEl("circle", { cx:hx, cy:hy, r:dtdR, fill:"none", stroke:"#ff4757", "stroke-width":2.5, "stroke-dasharray":"12,4", opacity:0.85 }));
-      const lbl2 = svgEl("text", { x:hx, y:hy-dtdR-8, fill:"#ff4757", "font-size":10, "font-weight":800, "text-anchor":"middle" });
-      lbl2.textContent = "DTD klussen: buiten " + curBE.dtd + " km is een onderaannemer rendabeler";
-      svg.appendChild(lbl2);
-    }
-  }
-  
-  // Zone labels
-  const innerR = curBE.ndtd > 0 && curBE.ndtd < 200 ? kmToPx(curBE.ndtd) : (curBE.dtd < 200 ? kmToPx(curBE.dtd) : 0);
-  const outerR = curBE.dtd > 0 && curBE.dtd < 200 ? kmToPx(curBE.dtd) : innerR;
-  if (innerR > 20) {
-    const eigLbl = svgEl("text", { x:hx-innerR*0.4, y:hy+innerR*0.6, fill:"rgba(46,213,115,0.5)", "font-size": Math.max(9, Math.min(13, innerR*0.08)), "font-weight":800, "text-anchor":"middle" });
-    eigLbl.textContent = "EIGEN UITVOERING";
-    svg.appendChild(eigLbl);
-  }
-  if (outerR > 20) {
-    const oaLbl = svgEl("text", { x:hx+outerR*1.08, y:hy-outerR*0.15, fill:"rgba(255,71,87,0.55)", "font-size": Math.max(9, Math.min(13, outerR*0.08)), "font-weight":800, "text-anchor":"start" });
-    oaLbl.textContent = "→ ONDERAANNEMER";
-    svg.appendChild(oaLbl);
-  }
-  
-  // Special case labels
-  if (curBE.ndtd === 0) {
-    const warnLbl = svgEl("text", { x:hx, y:hy+30, fill:"rgba(255,71,87,0.7)", "font-size":11, "font-weight":800, "text-anchor":"middle" });
-    warnLbl.textContent = "⚠ Niet-DTD: OA altijd rendabeler";
-    svg.appendChild(warnLbl);
-  }
-
   // Crosshair
   svg.appendChild(svgEl("line", { x1:hx, y1:0, x2:hx, y2:H, stroke:"rgba(255,255,255,0.025)" }));
   svg.appendChild(svgEl("line", { x1:0, y1:hy, x2:W, y2:hy, stroke:"rgba(255,255,255,0.025)" }));
@@ -1013,17 +1113,19 @@ function render() {
   hwt.textContent = "HALFWEG";
   svg.appendChild(hwt);
 
-  // Onderaannemer locatie
+  // Onderaannemer locaties
   if (showOA) {
-    const [ox, oy] = proj(52.1275, 5.2861);
-    svg.appendChild(svgEl("circle", { cx:ox, cy:oy, r:18, fill:"#f368e0", opacity:0.12 }));
-    svg.appendChild(svgEl("circle", { cx:ox, cy:oy, r:7, fill:"#f368e0", stroke:"#fff", "stroke-width":2.5 }));
-    const t1 = svgEl("text", { x:ox+12, y:oy, fill:"#f368e0", "font-size":10, "font-weight":800 });
-    t1.textContent = "SOESTERBERG";
-    svg.appendChild(t1);
-    const t2 = svgEl("text", { x:ox+12, y:oy+12, fill:"rgba(243,104,224,0.6)", "font-size":8, "font-weight":600 });
-    t2.textContent = "Onderaannemer";
-    svg.appendChild(t2);
+    OA_LOCS.forEach(oa => {
+      const [ox, oy] = proj(oa.la, oa.lo);
+      svg.appendChild(svgEl("circle", { cx:ox, cy:oy, r:18, fill:oa.kleur, opacity:0.12 }));
+      svg.appendChild(svgEl("circle", { cx:ox, cy:oy, r:7, fill:oa.kleur, stroke:"#fff", "stroke-width":2.5 }));
+      const t1 = svgEl("text", { x:ox+12, y:oy, fill:oa.kleur, "font-size":10, "font-weight":800 });
+      t1.textContent = oa.plaats.toUpperCase();
+      svg.appendChild(t1);
+      const t2 = svgEl("text", { x:ox+12, y:oy+12, fill:oa.kleur, "font-size":8, "font-weight":600, opacity:0.7 });
+      t2.textContent = oa.name;
+      svg.appendChild(t2);
+    });
   }
 
   // Search pin
@@ -1123,21 +1225,22 @@ window.addEventListener("resize", () => {
 });
 
 // ─── DAGPLANNER & MARGE CALCULATOR ─────────────────────────
+// Normtijden v2 (09-03-2026) — 851 klussen — uren = intercept + slope × m²
 const DP_NORMTIJDEN = {
-  'Bodem - Chips': {i:0.80, s:0.0179},
-  'Bodem - EPS Parels': {i:0.67, s:0.0135},
-  'Bodem - XXL Parels': {i:0.67, s:0.0135},
-  'Vloer - PIF Floor': {i:4.24, s:0.0122},
-  'Vloer - Knauf 035': {i:4.24, s:0.0122},
-  'Spouw - EPS Parels': {i:1.88, s:0.0164},
-  'Spouw - Glaswol': {i:0.83, s:0.054},
-  'Spouw - EnveriFoam': {i:1.88, s:0.0164},
-  'Dakis - PIF Roof': {i:2.92, s:0.0288},
-  'Dakis - Knauf Naturoll': {i:2.34, s:0.0258},
-  'Dakis - Gramitherm': {i:2.34, s:0.0258},
-  'Dakis - PIR + Gips': {i:2.92, s:0.0288},
-  'Dakis - PIR Recticel': {i:2.92, s:0.0288},
-  'Plafo - Cellulose': {i:2.82, s:0.0186},
+  'Bodem - Chips': {i:0.6292, s:0.02156, min:1.5},
+  'Bodem - EPS Parels': {i:0.3619, s:0.024098, min:1.5},
+  'Bodem - XXL Parels': {i:0.3619, s:0.024098, min:1.5},
+  'Vloer - PIF Floor': {i:1.3103, s:0.032433},
+  'Vloer - Knauf 035': {i:1.3103, s:0.032433},
+  'Spouw - EPS Parels': {i:1.6247, s:0.014639},
+  'Spouw - Glaswol': {i:3.1577, s:0.018825},
+  'Spouw - EnveriFoam': {i:1.6247, s:0.014639},
+  'Dakis - PIF Roof': {i:3.9773, s:0.008247},
+  'Dakis - Knauf Naturoll': {i:3.9773, s:0.008247},
+  'Dakis - Gramitherm': {i:3.9773, s:0.008247},
+  'Dakis - PIR + Gips': {i:3.9773, s:0.008247},
+  'Dakis - PIR Recticel': {i:3.9773, s:0.008247},
+  'Plafo - Cellulose': {i:1.6351, s:0.031072},
 };
 
 const MAT_PRIJS = {
@@ -1208,7 +1311,8 @@ function updateDikteOptions(catSelectId, dikteSelectId) {
 function dpNormtijd(cat, m2) {
   const m = DP_NORMTIJDEN[cat];
   if (!m) return 3;
-  return Math.max(0.5, m.i + m.s * (m2 || 80));
+  const raw = m.i + m.s * (m2 || 80);
+  return Math.max(m.min || 0.5, raw);
 }
 
 function dpResolveCity(name) {
@@ -1228,6 +1332,11 @@ function dpHemelsbrede(la1, lo1, la2, lo2) {
   return Math.sqrt((la2-la1)**2*111*111 + (lo2-lo1)**2*67*67);
 }
 
+function hexToRgb(hex) {
+  const h = hex.replace('#','');
+  return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)].join(',');
+}
+
 function timeStr(h) {
   const m = Math.round(h * 60);
   return `${Math.floor(m/60)}:${(m%60).toString().padStart(2,'0')}`;
@@ -1238,10 +1347,10 @@ function eur(v) { return '€' + Math.round(v).toLocaleString('nl-NL'); }
 function calcKlusMarge(omzet, isDTD, cat, m2, extraUren, dikte, extraKosten) {
   if (!omzet || !cat) return null;
   
-  const dtdComm = isDTD ? omzet * 0.27 : 0;
+  const dtdComm = isDTD ? omzet * CONFIG.dtd_commissie : 0;
   const omzetNaDTD = omzet - dtdComm;
-  const schouwComm = isDTD ? 0 : omzet * 0.035;
-  
+  const schouwComm = isDTD ? 0 : omzet * CONFIG.schouw_commissie;
+
   // Materiaalkosten via prijslijst (per m²)
   const diktes = MAT_PRIJS[cat];
   let matPerM2 = 0;
@@ -1258,9 +1367,9 @@ function calcKlusMarge(omzet, isDTD, cat, m2, extraUren, dikte, extraKosten) {
   }
   const materiaal = m2 * matPerM2;
   const extraMat = extraKosten || 0;
-  
+
   const normtijd = dpNormtijd(cat, m2) + (extraUren || 0);
-  const persUitvoer = normtijd * 75; // 2 × €37.50
+  const persUitvoer = normtijd * CONFIG.uurtarief;
   
   const margeNaKlus = omzetNaDTD - schouwComm - materiaal - extraMat - persUitvoer;
   
@@ -1278,10 +1387,26 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   const m2_1 = parseFloat(document.getElementById("dpM1").value) || 80;
   const [ex1a_u, ex1a_k] = document.getElementById("dpExtra1").value.split('|').map(Number);
   const [ex1b_u, ex1b_k] = document.getElementById("dpExtra1b").value.split('|').map(Number);
-  const extra1 = ex1a_u + ex1b_u;
-  const extraKosten1 = ex1a_k + ex1b_k;
+  let extra1 = ex1a_u + ex1b_u;
+  let extraKosten1 = ex1a_k + ex1b_k;
   const dikte1 = document.getElementById("dpDikte1").value;
-  
+
+  // Multi-isolatie klus 1: extra materiaal + normtijd van isolatie B
+  if (document.getElementById("dpMulti1").checked) {
+    const cat1b = document.getElementById("dpCat1b").value;
+    const m2_1b = parseFloat(document.getElementById("dpM1b").value) || 0;
+    const dikte1b = document.getElementById("dpDikte1b").value;
+    if (cat1b && m2_1b > 0) {
+      const diktes1b = MAT_PRIJS[cat1b];
+      let mat1b = 0;
+      if (diktes1b) {
+        mat1b = dikte1b && diktes1b[dikte1b] !== undefined ? diktes1b[dikte1b] : Object.values(diktes1b)[0] || 0;
+      }
+      extraKosten1 += m2_1b * mat1b;
+      extra1 += dpNormtijd(cat1b, m2_1b);
+    }
+  }
+
   const city2 = document.getElementById("dpCity2").value;
   const omzet2 = parseFloat(document.getElementById("dpOmzet2").value) || 0;
   const dtd2 = document.getElementById("dpDTD2").value === 'ja';
@@ -1289,9 +1414,25 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   const m2_2 = parseFloat(document.getElementById("dpM2").value) || 80;
   const [ex2a_u, ex2a_k] = document.getElementById("dpExtra2").value.split('|').map(Number);
   const [ex2b_u, ex2b_k] = document.getElementById("dpExtra2b").value.split('|').map(Number);
-  const extra2 = ex2a_u + ex2b_u;
-  const extraKosten2 = ex2a_k + ex2b_k;
+  let extra2 = ex2a_u + ex2b_u;
+  let extraKosten2 = ex2a_k + ex2b_k;
   const dikte2 = document.getElementById("dpDikte2").value;
+
+  // Multi-isolatie klus 2: extra materiaal + normtijd van isolatie B
+  if (document.getElementById("dpMulti2").checked) {
+    const cat2b = document.getElementById("dpCat2b").value;
+    const m2_2b = parseFloat(document.getElementById("dpM2b").value) || 0;
+    const dikte2b = document.getElementById("dpDikte2b").value;
+    if (cat2b && m2_2b > 0) {
+      const diktes2b = MAT_PRIJS[cat2b];
+      let mat2b = 0;
+      if (diktes2b) {
+        mat2b = dikte2b && diktes2b[dikte2b] !== undefined ? diktes2b[dikte2b] : Object.values(diktes2b)[0] || 0;
+      }
+      extraKosten2 += m2_2b * mat2b;
+      extra2 += dpNormtijd(cat2b, m2_2b);
+    }
+  }
   
   const res = document.getElementById("dpResult");
   
@@ -1313,9 +1454,9 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   const k2 = hasKlus2 ? calcKlusMarge(omzet2, dtd2, cat2, m2_2, extra2, dikte2, extraKosten2) : null;
   
   // ── ROUTE & REISKOSTEN ──
-  const RIJFACTOR = 1.25;
-  const SNELHEID = 80;
-  const LOODS_UUR = 0.75; // 45 min
+  const RIJFACTOR = CONFIG.rijfactor;
+  const SNELHEID = CONFIG.snelheid;
+  const LOODS_UUR = CONFIG.loodstijd_uur;
   
   const km_heen1 = dpHemelsbrede(HW.lat, HW.lon, loc1.la, loc1.lo) * RIJFACTOR;
   const rt_heen1 = km_heen1 / SNELHEID;
@@ -1333,15 +1474,15 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   
   const totaal_km = km_heen1 + km_tussen + km_terug;
   const totaal_reistijd = rt_heen1 + rt_tussen + rt_terug;
-  const brandstof = totaal_km * 0.20;
-  const persReis = totaal_reistijd * 75;
-  const loodstijd_eur = 2 * LOODS_UUR * 75; // voor + na = €112.50
+  const brandstof = totaal_km * CONFIG.brandstof_per_km;
+  const persReis = totaal_reistijd * CONFIG.uurtarief;
+  const loodstijd_eur = 2 * LOODS_UUR * CONFIG.uurtarief;
   
   // ── TOTALE MARGE ──
   const totaal_omzet = omzet1 + (hasKlus2 ? omzet2 : 0);
   const marge_klussen = k1.margeNaKlus + (k2 ? k2.margeNaKlus : 0);
   const totaal_kosten = (totaal_omzet - marge_klussen) + persReis + brandstof + loodstijd_eur;
-  const kostenmarge_5pct = totaal_kosten * 0.05;
+  const kostenmarge_5pct = totaal_kosten * CONFIG.kostenmarge_pct;
   const totaal_marge = marge_klussen - persReis - brandstof - loodstijd_eur - kostenmarge_5pct;
   const totaal_marge_pct = totaal_marge / totaal_omzet;
   
@@ -1379,9 +1520,9 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   
   // Verdict
   let verdict, vClass;
-  if (t_einde <= 15) { verdict = `✓ Past in een werkdag (klaar om ${timeStr(t_einde)})`; vClass = 'dp-ok'; }
-  else if (t_einde <= 17) { verdict = `⚠ Lang maar haalbaar (klaar om ${timeStr(t_einde)})`; vClass = 'dp-warn'; }
-  else { verdict = `✗ Past niet in een werkdag (klaar om ${timeStr(t_einde)})`; vClass = 'dp-bad'; }
+  if (t_retour <= 17) { verdict = `✓ Past in werkdag (terug om ${timeStr(t_retour)})`; vClass = 'dp-ok'; }
+  else if (t_retour <= 17.5) { verdict = `⚠ Krap — terug om ${timeStr(t_retour)} (max 17:00)`; vClass = 'dp-warn'; }
+  else { verdict = `✗ Past niet — terug om ${timeStr(t_retour)} (max 17:00)`; vClass = 'dp-bad'; }
   
   // Marge verdict
   let mVerdict, mClass;
@@ -1391,7 +1532,7 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   else { mVerdict = '✗ Verliesgevend!'; mClass = 'dp-bad'; }
   
   // Timeline bar: fixed scale 07:00 - 18:00 (11 hours)
-  const BAR_HOURS = 11; // 7:00 to 18:00
+  const BAR_HOURS = 10; // 7:00 to 17:00
   const pctBar = v => (v / BAR_HOURS * 100).toFixed(1) + '%';
   const segs = [
     { w: pctBar(LOODS_UUR), bg: '#555', label: 'Loods' },
@@ -1413,7 +1554,7 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
   const barHtml = segs.map(s => `<div class="dp-bar-seg" style="width:${s.w};background:${s.bg};${s.bg==='#1a1e2e'?'border:1px dashed #333;':''}">${s.label}</div>`).join('');
   
   // Hour markers
-  const hourMarkers = [7,8,9,10,11,12,13,14,15,16,17,18].map(h => {
+  const hourMarkers = [7,8,9,10,11,12,13,14,15,16,17].map(h => {
     const pos = ((h - 7) / BAR_HOURS * 100).toFixed(1);
     return `<div style="position:absolute;left:${pos}%;transform:translateX(-50%);font-size:9px;color:#555;">${h}</div>`;
   }).join('');
@@ -1424,11 +1565,11 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
       <div style="border-left:3px solid ${color};padding-left:8px;margin:6px 0;">
         <div style="font-size:12px;font-weight:700;color:${color};">${label}</div>
         <div class="dp-row"><span class="dp-label">Omzet</span><span class="dp-val">${eur(k.omzet)}</span></div>
-        ${k.dtdComm > 0 ? `<div class="dp-row"><span class="dp-label">DTD commissie (27%)</span><span class="dp-val" style="color:#ff4757;">-${eur(k.dtdComm)}</span></div>` : ''}
-        ${k.schouwComm > 0 ? `<div class="dp-row"><span class="dp-label">Schouwcommissie (3,5%)</span><span class="dp-val" style="color:#ff4757;">-${eur(k.schouwComm)}</span></div>` : ''}
+        ${k.dtdComm > 0 ? `<div class="dp-row"><span class="dp-label">DTD commissie (${(CONFIG.dtd_commissie*100).toFixed(0)}%)</span><span class="dp-val" style="color:#ff4757;">-${eur(k.dtdComm)}</span></div>` : ''}
+        ${k.schouwComm > 0 ? `<div class="dp-row"><span class="dp-label">Schouwcommissie (${(CONFIG.schouw_commissie*100).toFixed(1)}%)</span><span class="dp-val" style="color:#ff4757;">-${eur(k.schouwComm)}</span></div>` : ''}
         <div class="dp-row"><span class="dp-label">Materiaal (${k.m2}m² × €${k.matPerM2.toFixed(2)} · ${k.dikteLabel})</span><span class="dp-val" style="color:#ff4757;">-${eur(k.materiaal)}</span></div>
         ${k.extraMat > 0 ? `<div class="dp-row"><span class="dp-label">Extra materiaalkosten</span><span class="dp-val" style="color:#ff4757;">-${eur(k.extraMat)}</span></div>` : ''}
-        <div class="dp-row"><span class="dp-label">Personeel uitvoer (${k.normtijd.toFixed(1)}u × €75)</span><span class="dp-val" style="color:#ff4757;">-${eur(k.persUitvoer)}</span></div>
+        <div class="dp-row"><span class="dp-label">Personeel uitvoer (${k.normtijd.toFixed(1)}u × €${CONFIG.uurtarief})</span><span class="dp-val" style="color:#ff4757;">-${eur(k.persUitvoer)}</span></div>
         <div class="dp-row"><span class="dp-label">Marge na klus</span><span class="dp-val ${k.margeNaKlus>=0?'dp-ok':'dp-bad'}">${eur(k.margeNaKlus)}</span></div>
       </div>`;
   }
@@ -1449,13 +1590,13 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
       
       <div style="border-top:1px solid #2a2e42;margin-top:8px;padding-top:8px;">
         <div style="font-size:12px;font-weight:700;color:#e8712a;margin-bottom:4px;">REISKOSTEN (gedeeld)</div>
-        <div class="dp-row"><span class="dp-label">Pers. reis (${totaal_reistijd.toFixed(1)}u × €75)</span><span class="dp-val" style="color:#ff4757;">-${eur(persReis)}</span></div>
-        <div class="dp-row"><span class="dp-label">Brandstof (${totaal_km.toFixed(0)} km × €0,20)</span><span class="dp-val" style="color:#ff4757;">-${eur(brandstof)}</span></div>
-        <div class="dp-row"><span class="dp-label">Loodstijd (2 × 45 min × €75)</span><span class="dp-val" style="color:#ff4757;">-${eur(loodstijd_eur)}</span></div>
+        <div class="dp-row"><span class="dp-label">Pers. reis (${totaal_reistijd.toFixed(1)}u × €${CONFIG.uurtarief})</span><span class="dp-val" style="color:#ff4757;">-${eur(persReis)}</span></div>
+        <div class="dp-row"><span class="dp-label">Brandstof (${totaal_km.toFixed(0)} km × €${CONFIG.brandstof_per_km.toFixed(2)})</span><span class="dp-val" style="color:#ff4757;">-${eur(brandstof)}</span></div>
+        <div class="dp-row"><span class="dp-label">Loodstijd (2 × ${Math.round(CONFIG.loodstijd_uur*60)} min × €${CONFIG.uurtarief})</span><span class="dp-val" style="color:#ff4757;">-${eur(loodstijd_eur)}</span></div>
       </div>
       
       <div style="border-top:2px solid #2a2e42;margin-top:8px;padding-top:8px;">
-        <div class="dp-row"><span class="dp-label">Kostenmarge (5%)</span><span class="dp-val" style="color:#ff4757;">-${eur(kostenmarge_5pct)}</span></div>
+        <div class="dp-row"><span class="dp-label">Kostenmarge (${(CONFIG.kostenmarge_pct*100).toFixed(0)}%)</span><span class="dp-val" style="color:#ff4757;">-${eur(kostenmarge_5pct)}</span></div>
         <div class="dp-row"><span class="dp-label" style="font-weight:700;color:#fff;">TOTALE MARGE</span><span class="dp-val ${totaal_marge>=0?'dp-ok':'dp-bad'}" style="font-size:16px;">${eur(totaal_marge)}</span></div>
         <div class="dp-row"><span class="dp-label">Op omzet ${eur(totaal_omzet)}</span><span class="dp-val ${totaal_marge_pct>=0.20?'dp-ok':'dp-bad'}">${(totaal_marge_pct*100).toFixed(1)}%</span></div>
         <div class="dp-row"><span class="dp-label">Totale werkdag</span><span class="dp-val">${totaal_uur.toFixed(1)} uur</span></div>
@@ -1467,49 +1608,205 @@ document.getElementById("dpCalcBtn").addEventListener("click", async () => {
       </div>` : ''}
       
       ${(()=>{
-        // OA vergelijking: marge als onderaannemer het uitvoert
-        // OA kost gem 53% van omzet. Wij betalen alleen schouw (3.5% niet-DTD) of DTD commissie
-        // Geen reis, geen brandstof, geen loodstijd, geen personeel
-        const OA_COST_PCT = 0.533;
-        
-        // Klus 1 via OA
-        const oa1_omzetNaDTD = k1.omzetNaDTD;
-        const oa1_schouw = k1.schouwComm;
-        const oa1_kosten = omzet1 * OA_COST_PCT;
-        const oa1_marge = oa1_omzetNaDTD - oa1_schouw - oa1_kosten;
-        
-        // Klus 2 via OA
-        let oa2_marge = 0;
-        let oa2_html = '';
-        if (k2) {
-          const oa2_omzetNaDTD = k2.omzetNaDTD;
-          const oa2_schouw = k2.schouwComm;
-          const oa2_kosten = omzet2 * OA_COST_PCT;
-          oa2_marge = oa2_omzetNaDTD - oa2_schouw - oa2_kosten;
-          oa2_html = `<div class="dp-row"><span class="dp-label">Klus 2: OA kosten (53%)</span><span class="dp-val">-${eur(oa2_kosten)}</span></div>`;
+        // OA vergelijking per onderaannemer op basis van werkelijke kostprijzen uit OA_PRIJZEN
+        function oaHoofdcat(cat) {
+          if (!cat) return '';
+          if (cat.startsWith('Bodem')) return 'Bodem';
+          if (cat.startsWith('Vloer')) return 'Vloer';
+          if (cat.startsWith('Spouw')) return 'Spouw';
+          if (cat.startsWith('Dakis') || cat.startsWith('Dak')) return 'Dak';
+          if (cat.startsWith('Plafo')) return 'Spouw';
+          return '';
         }
-        
-        const oa_totaal_marge = oa1_marge + oa2_marge;
-        const oa_totaal_pct = oa_totaal_marge / totaal_omzet;
-        const verschil = oa_totaal_marge - totaal_marge;
-        const beter = verschil > 0 ? 'OA' : 'Eigen';
-        const beterClass = verschil > 0 ? 'dp-bad' : 'dp-ok';
-        
+
+        function findOAPrijs(cat) {
+          const hcat = oaHoofdcat(cat);
+          const prijsCat = OA_PRIJZEN[hcat];
+          if (!prijsCat) return {};
+          const cl = (cat || '').toLowerCase();
+          for (const [product, prijzen] of Object.entries(prijsCat)) {
+            const pl = product.toLowerCase();
+            if (cl.includes('chips') && pl.includes('chips')) return prijzen;
+            if (cl.includes('eps parels') && hcat==='Bodem' && pl.includes('eps plat') && pl.includes('15')) return prijzen;
+            if (cl.includes('xxl') && pl.includes('eps')) return prijzen;
+            if (cl.includes('pif floor') && pl.includes('pif floor 35')) return prijzen;
+            if (cl.includes('knauf 035') && pl.includes('knauf')) return prijzen;
+            if (cl.includes('glaswol') && pl.includes('wol')) return prijzen;
+            if (cl.includes('enverifoam') && pl.includes('enverifoam')) return prijzen;
+            if (cl.includes('eps parels') && hcat==='Spouw' && pl.includes('eps')) return prijzen;
+            if (cl.includes('pif roof') && pl.includes('pif roof 35')) return prijzen;
+            if (cl.includes('knauf naturoll') && pl.includes('knauf naturoll 035 140')) return prijzen;
+            if (cl.includes('gramitherm') && pl.includes('gramitherm 140')) return prijzen;
+            if (cl.includes('pir') && pl.includes('pir')) return prijzen;
+            if (cl.includes('cellulose') && pl.includes('plafond')) return prijzen;
+          }
+          if (Object.keys(prijsCat).length > 0) return Object.values(prijsCat)[0];
+          return {};
+        }
+
+        const oaPrijzen1 = findOAPrijs(k1.cat);
+        const oaPrijzen2 = k2 ? findOAPrijs(k2.cat) : {};
+
+        // OA voorwaarden: extra kosten per OA op basis van regels
+        function oaExtraKosten(oaNaam, cat, m2, dist) {
+          let extra = 0;
+          const warnings = [];
+          const cl = (cat || '').toLowerCase();
+
+          if (oaNaam === 'Stap Isolatie') {
+            // Min €650 per spouwopdracht
+            if (cl.includes('spouw')) {
+              const basisKosten = (oaPrijzen1[oaNaam] || 0) * m2;
+              if (basisKosten < 650) { extra += 650 - basisKosten; warnings.push('Min. €650 spouwopdracht'); }
+            }
+          }
+          if (oaNaam === 'Isolatietechniek NH') {
+            // Steiger €60/dag (niet automatisch, maar noteren)
+            // Min tarief bij <50m² buiten 60km
+            if (m2 < 50 && dist > 60) { extra += 75; warnings.push('Toeslag <50m² buiten 60km'); }
+          }
+          if (oaNaam === 'Gelijk Isoleren') {
+            // Insula cert sprayfoam: €0.32/m²
+            if (cl.includes('sprayfoam') || cl.includes('pif floor') || cl.includes('pif roof')) { extra += m2 * 0.32; warnings.push('Insula cert. +€0,32/m²'); }
+          }
+          if (oaNaam === 'Wijk Isolatie') {
+            // Insula cert: €0.32/m² bij sprayfoam
+            if (cl.includes('sprayfoam')) { extra += m2 * 0.32; warnings.push('Insula cert. +€0,32/m²'); }
+            // Biobased +€5/m²
+            if (cl.includes('gramitherm') || cl.includes('isovlas')) { extra += m2 * 5; warnings.push('Biobased toeslag +€5/m²'); }
+          }
+          if (oaNaam === 'Zeker Isolatie') {
+            // Reiskosten >100km: €1/km extra
+            if (dist > 100) { extra += (dist - 100) * 1; warnings.push('Reiskosten +€'+(dist-100)+' (>100km)'); }
+          }
+          return { extra, warnings };
+        }
+
+        const oaResults = OA_LOCS.map(oa => {
+          const prijs1 = oaPrijzen1[oa.name];
+          const prijs2 = k2 ? oaPrijzen2[oa.name] : undefined;
+          if (prijs1 === undefined) return null;
+
+          const dist = loc1 ? Math.round(dpHemelsbrede(oa.la, oa.lo, loc1.la, loc1.lo) * CONFIG.rijfactor) : 0;
+
+          // Basiskosten
+          let kosten1 = prijs1 * k1.m2;
+          const kosten2 = (k2 && prijs2 !== undefined) ? prijs2 * k2.m2 : null;
+
+          // Voorwaarden toepassen
+          const vw1 = oaExtraKosten(oa.name, k1.cat, k1.m2, dist);
+          kosten1 += vw1.extra;
+          let vw2 = { extra: 0, warnings: [] };
+          let kosten2Adj = kosten2;
+          if (k2 && kosten2 !== null) {
+            vw2 = oaExtraKosten(oa.name, k2.cat, k2.m2, dist);
+            kosten2Adj = kosten2 + vw2.extra;
+          }
+          const allWarnings = [...vw1.warnings, ...vw2.warnings];
+
+          const k1marge = k1.omzetNaDTD - k1.schouwComm - kosten1;
+          const k2marge = (k2 && kosten2Adj !== null) ? (k2.omzetNaDTD - k2.schouwComm - kosten2Adj) : 0;
+
+          const totMarge = k1marge + k2marge;
+
+          return {
+            name: oa.name, plaats: oa.plaats, kleur: oa.kleur,
+            prijs1, kosten1, prijs2, kosten2: kosten2Adj,
+            k1marge, k2marge, totMarge, dist,
+            kanKlus2: k2 ? kosten2 !== null : true,
+            warnings: allWarnings,
+            extraKosten: vw1.extra + vw2.extra,
+          };
+        }).filter(Boolean).sort((a,b) => b.totMarge - a.totMarge);
+
+        const verschilBeste = oaResults.length > 0 ? oaResults[0].totMarge - totaal_marge : 0;
+
+        // Bereken marge-percentages voor balk-visualisatie
+        const allMarges = [totaal_marge, ...oaResults.map(o => o.totMarge)];
+        const maxMarge = Math.max(...allMarges.map(Math.abs), 1);
+
         return `
-      <div style="border-top:2px solid #f368e0;margin-top:10px;padding-top:8px;">
-        <div style="font-size:12px;font-weight:700;color:#f368e0;margin-bottom:6px;">WAT ALS EEN ONDERAANNEMER DIT DOET?</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px;">OA kost gem. 53% van omzet. Geen reis, brandstof of loodstijd.</div>
-        <div class="dp-row"><span class="dp-label">Klus 1: OA kosten (53%)</span><span class="dp-val">-${eur(omzet1 * OA_COST_PCT)}</span></div>
-        ${oa2_html}
-        ${k1.dtdComm > 0 ? `<div class="dp-row"><span class="dp-label">DTD commissie</span><span class="dp-val">-${eur(k1.dtdComm + (k2?k2.dtdComm:0))}</span></div>` : ''}
-        ${k1.schouwComm > 0 ? `<div class="dp-row"><span class="dp-label">Schouwcommissie</span><span class="dp-val">-${eur(k1.schouwComm + (k2?k2.schouwComm:0))}</span></div>` : ''}
-        <div class="dp-row"><span class="dp-label" style="font-weight:700;color:#f368e0;">Marge via OA</span><span class="dp-val" style="color:#f368e0;font-size:14px;">${eur(oa_totaal_marge)} (${(oa_totaal_pct*100).toFixed(1)}%)</span></div>
-        <div style="margin-top:6px;padding:6px 8px;border-radius:6px;background:${verschil>0?'rgba(255,71,87,0.15)':'rgba(46,213,115,0.15)'};">
-          <div class="dp-row">
-            <span class="dp-label" style="font-weight:700;">Verschil</span>
-            <span class="${beterClass}" style="font-size:12px;">${verschil>0?'+':''}${eur(verschil)} → ${beter} is beter</span>
+      <div style="margin-top:14px;padding-top:12px;border-top:2px solid #f368e0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:4px;height:22px;background:#f368e0;border-radius:2px;"></div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#f368e0;letter-spacing:0.3px;">Onderaannemer vergelijking</div>
+            <div style="font-size:10px;color:#666;">Marge per OA op basis van werkelijke kostprijzen. Gesorteerd op jouw marge.</div>
           </div>
         </div>
+
+        <!-- Eigen uitvoering referentie -->
+        <div style="padding:8px 12px;border-radius:8px;background:linear-gradient(135deg,rgba(46,213,115,0.08),rgba(46,213,115,0.02));border:1px solid rgba(46,213,115,0.25);margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Eigen uitvoering</div>
+              <div style="font-size:9px;color:#666;margin-top:1px;">Inclusief reis + loods + personeel</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:16px;font-weight:800;color:${totaal_marge>=0?'#2ed573':'#ff4757'};">${eur(totaal_marge)}</div>
+              <div style="font-size:10px;color:${totaal_marge_pct>=0.2?'#2ed573':'#ff4757'};font-weight:600;">${(totaal_marge_pct*100).toFixed(1)}% marge</div>
+            </div>
+          </div>
+          <div style="margin-top:6px;height:4px;background:#1a1e2e;border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${Math.max(0,totaal_marge/maxMarge*100).toFixed(0)}%;background:#2ed573;border-radius:2px;"></div>
+          </div>
+        </div>
+
+        ${oaResults.length === 0 ? '<div style="font-size:11px;color:#888;padding:8px 0;">Geen onderaannemer beschikbaar voor dit klustype.</div>' :
+          oaResults.map((oa, i) => {
+            const verschil = oa.totMarge - totaal_marge;
+            const isBeste = i === 0;
+            const oaBeter = verschil > 0;
+            const margeW = Math.max(0, oa.totMarge / maxMarge * 100).toFixed(0);
+            return `
+            <div style="padding:10px 12px;border-radius:8px;background:${isBeste?'linear-gradient(135deg,rgba('+hexToRgb(oa.kleur)+',0.12),rgba('+hexToRgb(oa.kleur)+',0.03))':'#1a1e2e'};border:1px solid ${isBeste?oa.kleur+'66':'#2a2e42'};margin-bottom:6px;transition:all 0.15s;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div style="flex:1;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    ${isBeste?'<span style="font-size:10px;background:'+oa.kleur+';color:#0f1119;padding:1px 6px;border-radius:3px;font-weight:700;">BESTE</span>':'<span style="font-size:10px;color:#555;font-weight:600;">#'+(i+1)+'</span>'}
+                    <span style="font-size:12px;font-weight:700;color:${oa.kleur};">${oa.name}</span>
+                  </div>
+                  <div style="font-size:10px;color:#666;margin-top:2px;">${oa.plaats} · ${oa.dist} km van klus</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:15px;font-weight:800;color:${oa.totMarge>=0?'#2ed573':'#ff4757'};">${eur(oa.totMarge)}</div>
+                  <div style="font-size:10px;color:${oa.totMarge>=0?'#2ed573':'#ff4757'};font-weight:600;">${(oa.totMarge/(omzet1+(hasKlus2?omzet2:0))*100).toFixed(1)}%</div>
+                </div>
+              </div>
+
+              <div style="margin:6px 0 4px;height:4px;background:#0f1119;border-radius:2px;overflow:hidden;">
+                <div style="height:100%;width:${margeW}%;background:${oa.kleur};border-radius:2px;"></div>
+              </div>
+
+              <div style="display:flex;gap:8px;font-size:10px;color:#888;flex-wrap:wrap;">
+                <span>K1: ${k1.m2}m² × €${oa.prijs1.toFixed(2)} = ${eur(oa.kosten1)}</span>
+                ${k2 && oa.kosten2 !== null ? '<span>K2: '+k2.m2+'m² × €'+oa.prijs2.toFixed(2)+' = '+eur(oa.kosten2)+'</span>' : ''}
+                ${k2 && !oa.kanKlus2 ? '<span style="color:#ff4757;">Kan klus 2 niet uitvoeren</span>' : ''}
+              </div>
+
+              ${oa.warnings && oa.warnings.length > 0 ? '<div style="font-size:9px;color:#ffa502;margin-top:3px;display:flex;align-items:center;gap:4px;"><span style="opacity:0.7;">!</span> '+oa.warnings.join(' · ')+(oa.extraKosten>0?' (+'+eur(oa.extraKosten)+')':'')+'</div>' : ''}
+
+              <div style="margin-top:4px;font-size:10px;font-weight:700;color:${oaBeter?'#ff4757':'#2ed573'};">
+                ${oaBeter?'OA levert €'+Math.round(verschil)+' meer marge dan eigen':'Eigen uitvoering is €'+Math.round(Math.abs(verschil))+' voordeliger'}
+              </div>
+            </div>`;
+          }).join('')}
+
+        <!-- Conclusie -->
+        ${oaResults.length > 0 ? `
+        <div style="margin-top:8px;padding:10px 12px;border-radius:8px;background:${verschilBeste>0?'linear-gradient(135deg,rgba(255,71,87,0.12),rgba(255,71,87,0.04))':'linear-gradient(135deg,rgba(46,213,115,0.12),rgba(46,213,115,0.04))'};border:1px solid ${verschilBeste>0?'rgba(255,71,87,0.3)':'rgba(46,213,115,0.3)'};">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">${verschilBeste>0?'&#9888;':'&#10003;'}</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:${verschilBeste>0?'#ff4757':'#2ed573'};">
+                ${verschilBeste>0?'Onderaannemer is voordeliger':'Eigen uitvoering is het meest rendabel'}
+              </div>
+              <div style="font-size:10px;color:#888;margin-top:1px;">
+                ${verschilBeste>0?oaResults[0].name+' levert €'+Math.round(verschilBeste)+' meer marge ('+((oaResults[0].totMarge/(omzet1+(hasKlus2?omzet2:0)))*100).toFixed(1)+'% vs '+(totaal_marge_pct*100).toFixed(1)+'%)':'Verschil met beste OA ('+oaResults[0].name+'): €'+Math.round(Math.abs(verschilBeste))}
+              </div>
+            </div>
+          </div>
+        </div>` : ''}
       </div>`;
       })()}
     </div>
@@ -1527,6 +1824,18 @@ init();
   <div class="planner-main" id="plannerMain"></div>
 </div>
 
+<!-- OA PRIJZEN TAB -->
+<div id="oaprijzenPanel" style="display:none;height:calc(100vh - 42px);overflow:auto;padding:20px;background:#0f1119;"></div>
+
+<!-- VLOOT TAB -->
+<div id="vlootPanel" style="display:none;height:calc(100vh - 42px);overflow:auto;padding:20px;background:#0f1119;"></div>
+
+<!-- TEAMS TAB -->
+<div id="teamsPanel" style="display:none;height:calc(100vh - 42px);overflow:auto;padding:20px;background:#0f1119;"></div>
+
+<!-- CONFIG/INVOERDATA TAB -->
+<div id="configPanel" style="display:none;height:calc(100vh - 42px);overflow:auto;padding:20px;background:#0f1119;"></div>
+
 <script>
 // =============================================
 // PLANNING DATA (Splandid export)
@@ -1536,17 +1845,407 @@ const PLAN_DATA = [{"kl":"Bart Koornstra","pl":"Almere","pc":"1351JC","st":"De P
 // =============================================
 // TAB SWITCHING
 // =============================================
+function toggleMultiIso(n) {
+  const checked = document.getElementById('dpMulti'+n).checked;
+  document.getElementById('dpMultiWrap'+n).style.display = checked ? 'block' : 'none';
+}
+
+function filterTePlannen(q) {
+  const cards = document.querySelectorAll('#tpList .tp-card');
+  const ql = q.toLowerCase();
+  cards.forEach(c => {
+    const naam = c.dataset.naam || '';
+    const plaats = (c.dataset.plaats || '').toLowerCase();
+    const type = (c.dataset.type || '').toLowerCase();
+    c.style.display = (!q || naam.includes(ql) || plaats.includes(ql) || type.includes(ql)) ? '' : 'none';
+  });
+}
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('heatmapWrap').classList.add('hidden');
+  document.getElementById('plannerPanel').classList.remove('active');
+  document.getElementById('oaprijzenPanel').style.display = 'none';
+  document.getElementById('vlootPanel').style.display = 'none';
+  document.getElementById('teamsPanel').style.display = 'none';
+  document.getElementById('configPanel').style.display = 'none';
   if (tab === 'heatmap') {
     document.getElementById('heatmapWrap').classList.remove('hidden');
-    document.getElementById('plannerPanel').classList.remove('active');
-  } else {
-    document.getElementById('heatmapWrap').classList.add('hidden');
+  } else if (tab === 'planner') {
     document.getElementById('plannerPanel').classList.add('active');
     if (!plannerReady) initPlanner();
+  } else if (tab === 'oaprijzen') {
+    document.getElementById('oaprijzenPanel').style.display = 'block';
+    buildOAPrijzenTab();
+  } else if (tab === 'vloot') {
+    document.getElementById('vlootPanel').style.display = 'block';
+    buildVlootTab();
+  } else if (tab === 'teams') {
+    document.getElementById('teamsPanel').style.display = 'block';
+    buildTeamsTab();
+  } else if (tab === 'config') {
+    document.getElementById('configPanel').style.display = 'block';
+    buildConfigTab();
   }
+}
+
+function buildOAPrijzenTab() {
+  const p = document.getElementById('oaprijzenPanel');
+  if (p.dataset.built) return;
+  p.dataset.built = '1';
+
+  let html = '<div style="max-width:1400px;margin:0 auto;">';
+  html += '<div style="font-size:20px;font-weight:800;color:#f368e0;margin-bottom:4px;">Onderaannemers Prijslijst</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:16px;">Alle bedragen excl. BTW · Bron: OA prijslijsten 09-03-2026</div>';
+
+  // OA header namen
+  const oaNames = OA_LOCS.map(o => o.name);
+
+  for (const [categorie, producten] of Object.entries(OA_PRIJZEN)) {
+    html += `<div style="font-size:14px;font-weight:700;color:#e8712a;margin:16px 0 8px;text-transform:uppercase;">${categorie}</div>`;
+    html += '<table style="width:100%;border-collapse:collapse;margin-bottom:8px;">';
+    html += '<tr style="border-bottom:1px solid #2a2e42;">';
+    html += '<th style="text-align:left;padding:6px 8px;font-size:10px;color:#888;font-weight:600;">Product</th>';
+    oaNames.forEach((n,i) => {
+      const oa = OA_LOCS[i];
+      html += `<th style="text-align:center;padding:6px 4px;font-size:9px;color:${oa.kleur};font-weight:700;min-width:70px;">${n}<br><span style="font-weight:400;color:#666;">${oa.plaats}</span></th>`;
+    });
+    html += '</tr>';
+
+    for (const [product, prijzen] of Object.entries(producten)) {
+      html += '<tr style="border-bottom:1px solid #1a1e2e;">';
+      html += `<td style="padding:5px 8px;font-size:11px;color:#ccc;">${product}</td>`;
+      oaNames.forEach((n,i) => {
+        const prijs = prijzen[n];
+        const oa = OA_LOCS[i];
+        // Bepaal goedkoopste
+        const allPrices = Object.values(prijzen).filter(v => typeof v === 'number');
+        const minP = Math.min(...allPrices);
+        const isMin = prijs === minP && allPrices.length > 1;
+        html += `<td style="text-align:center;padding:5px 4px;font-size:11px;${prijs !== undefined ? (isMin ? 'color:#2ed573;font-weight:700;' : 'color:#fff;') : 'color:#333;'}">${prijs !== undefined ? '€'+prijs.toFixed(2) : '—'}</td>`;
+      });
+      html += '</tr>';
+    }
+    html += '</table>';
+  }
+
+  // OA Voorwaarden
+  html += '<div style="font-size:14px;font-weight:700;color:#e8712a;margin:24px 0 8px;">VOORWAARDEN & REGELS</div>';
+  const voorwaarden = [
+    ['Stap Isolatie','Westland','Min. €650 per spouwmuur opdracht. Reiskosten buiten werkgebied.'],
+    ['Isolatietechniek NH','Heerhugowaard','Min. tarief bij < 50m² buiten 60 km. Geen locatietoeslag > 70m². Steiger €60/dag.'],
+    ['Gelijk Isoleren','Hoogezand','Insula cert. sprayfoam: €0,32/m². Spouw extra/cm: wol €1,25, foam €1,75.'],
+    ['Wijk Isolatie','Nieuw-Buinen','Insula cert: €0,32/m². Spouw extra/cm: wol €1,50, foam €2,00. Biobased +€5/m². Kruipluik €245.'],
+    ['Zeker Isolatie','Huizen','Reiskosten > 100 km: €1/km. Grondwater bubbelfolie: €1/m².'],
+    ['Badr','Den Haag','Facturatie 2-wekelijks. De Vries levert materiaal+kleding. Alleen spouwteam.'],
+    ['Maison Maison','Halfweg','Specialist Tonzon + kruipruimte. Schoonmaken €45,37/m². Toegang beton €758,93.'],
+  ];
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;">';
+  voorwaarden.forEach(([naam, plaats, regels]) => {
+    const oa = OA_LOCS.find(o => o.name === naam);
+    html += `<div style="background:#1a1e2e;border-radius:8px;padding:10px 12px;border-left:3px solid ${oa?oa.kleur:'#888'};">
+      <div style="font-size:12px;font-weight:700;color:${oa?oa.kleur:'#fff'};">${naam} <span style="font-size:9px;color:#888;">${plaats}</span></div>
+      <div style="font-size:10px;color:#aaa;margin-top:4px;line-height:1.5;">${regels}</div>
+    </div>`;
+  });
+  html += '</div></div>';
+  p.innerHTML = html;
+}
+
+function buildVlootTab() {
+  const p = document.getElementById('vlootPanel');
+  if (p.dataset.built) return;
+  p.dataset.built = '1';
+
+  const voertuigen = [
+    { cat:'BAKWAGENS (GEEN TREKHAAK)', items: [
+      { k:'V-50-LJD', type:'Iveco Bakwagen', th:'NEE', mat:'Drowa Chips, PIF Dak/Vloer, Knauf Dak, Easycell, Supafil, Wolmachine', cap:'Groot: 50m² × 20cm = 10m³' },
+      { k:'V-65-NLP', type:'Iveco Bakwagen', th:'NEE', mat:'Drowa Chips, PIF Dak/Vloer, Knauf Dak, Easycell, Supafil, Wolmachine', cap:'Groot: 50m² × 20cm = 10m³' },
+      { k:'V-216-JG', type:'Peugeot Boxer', th:'NEE', mat:'Drowa Chips, PIF Dak/Vloer, Knauf Dak, Easycell, Supafil, Wolmachine', cap:'Klein: 40m² × 20cm = 8m³' },
+    ]},
+    { cat:'SPOUW EPS BAKWAGENS (MET TREKHAAK)', items: [
+      { k:'V-66-NDS', type:'Ford Bakwagen', th:'JA', mat:'Spouwparels EPS + Compressor. Ook bodemparel (+ blower).', cap:'Parels', prio:'PRIORITEIT: eerst voor spouwmuur' },
+      { k:'VSX-42-S', type:'Mercedes Bakwagen', th:'JA', mat:'Spouwparels EPS + Compressor. Ook bodemparel (+ blower).', cap:'Parels', prio:'PRIORITEIT: eerst voor spouwmuur' },
+    ]},
+    { cat:'BODEMPARELWAGENS', items: [
+      { k:'VKK-27-X', type:'Mercedes Bakwagen', th:'JA', mat:'Bodemparels. Max 2 bodemklussen/dag.', cap:'Parels' },
+      { k:'V-64-NBJ', type:'Mercedes Bakwagen', th:'JA', mat:'Bodemparels. Kan leeg → Chips, PIF, Knauf.', cap:'Flexibel' },
+    ]},
+    { cat:'AANHANGERS', items: [
+      { k:'75-WK-VW', type:'Aanhanger (groot)', th:'–', mat:'Wolmachine (evt. Easycell)', cap:'–' },
+      { k:'58-WT-GD', type:'Aanhanger (klein)', th:'–', mat:'Wolmachine, PIF, Chips, Easycell, Supafill', cap:'Leeg, flexibel' },
+      { k:'37-WV-SL', type:'Aanhanger', th:'–', mat:'Enverifoam uitvoer', cap:'–' },
+      { k:'92-WP-NP', type:'Aanhanger', th:'–', mat:'Spouw/Bodemparel uitvoer', cap:'–' },
+    ]},
+    { cat:'OVERIGE WAGENS', items: [
+      { k:'VKX-24-S', type:'Ford Transit', th:'JA', mat:'Klussen met aanhanger', cap:'–' },
+      { k:'VX-637-K', type:'Opel Vivaro', th:'NEE', mat:'PIF Floor/Roof, Knauf Dak', cap:'±40m² PIF, ±50m² Knauf' },
+      { k:'V-603-TZ', type:'Ford Courier', th:'NEE', mat:'Service, kleine uitvoer < 30m²', cap:'Beperkt' },
+    ]},
+  ];
+
+  let html = '<div style="max-width:1200px;margin:0 auto;">';
+  html += '<div style="font-size:20px;font-weight:800;color:#e8712a;margin-bottom:4px;">Wagenpark</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:16px;">Uitvalsbasis: Halfweg</div>';
+
+  voertuigen.forEach(g => {
+    html += `<div style="font-size:13px;font-weight:700;color:#e8712a;margin:16px 0 8px;">${g.cat}</div>`;
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:8px;">';
+    g.items.forEach(v => {
+      html += `<div style="background:#1a1e2e;border-radius:8px;padding:10px 12px;border-left:3px solid ${v.prio?'#ff4757':'#2a2e42'};">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:#fff;">${v.k}</span>
+          <span style="font-size:10px;color:#888;">${v.type}</span>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:4px;">${v.mat}</div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <span style="font-size:9px;padding:2px 6px;border-radius:4px;background:#252940;color:${v.th==='JA'?'#2ed573':'#888'};">Trekhaak: ${v.th}</span>
+          <span style="font-size:9px;padding:2px 6px;border-radius:4px;background:#252940;color:#4dabf7;">${v.cap}</span>
+        </div>
+        ${v.prio ? '<div style="font-size:9px;color:#ff4757;font-weight:700;margin-top:4px;">'+v.prio+'</div>' : ''}
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  html += '</div>';
+  p.innerHTML = html;
+}
+
+function buildTeamsTab() {
+  const p = document.getElementById('teamsPanel');
+  if (p.dataset.built) return;
+  p.dataset.built = '1';
+
+  const uitvoerders = [
+    { n:'Bob (Umut)', sp:'JA', dk:'JA', vl:'COMB', bo:'JA', ef:'JA', wm:'JA', da:'NEE', ah:'NEE' },
+    { n:'Mehmet', sp:'JA', dk:'JA', vl:'COMB', bo:'JA', ef:'NEE', wm:'JA', da:'NEE', ah:'NEE' },
+    { n:'Lukas', sp:'JA', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Mariusz', sp:'JA', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Patryk', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Tomasz', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Nazar', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Bohdan', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Kamil', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Deac (Ovidiu)', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Vitaly', sp:'COMB', dk:'JA', vl:'COMB', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Roman', sp:'COMB', dk:'JA', vl:'COMB', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Marvin', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'COMB', wm:'COMB', da:'JA', ah:'JA' },
+    { n:'Janairo', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Dyllan', sp:'COMB', dk:'JA', vl:'JA', bo:'JA', ef:'NEE', wm:'COMB', da:'NEE', ah:'NEE' },
+    { n:'Dominic', sp:'JA', dk:'JA', vl:'JA', bo:'JA', ef:'COMB', wm:'COMB', da:'JA', ah:'NEE' },
+    { n:'Roy', sp:'JA', dk:'JA', vl:'JA', bo:'JA', ef:'COMB', wm:'COMB', da:'JA', ah:'JA' },
+  ];
+
+  const teams = [
+    { t:'Team 1', m:['Umut (Bob)','Mehmet'] },
+    { t:'Team 2', m:['Nazar','Bohdan'] },
+    { t:'Team 3', m:['Patryk','Tomasz'] },
+    { t:'Team 4', m:['Vitaly','Roman','Kamil'], note:'Kies 2 van de 3' },
+    { t:'Team 5', m:['Lukas','Mariusz'] },
+    { t:'Team 6', m:['Marvin','Janairo','Dyllan'], note:'Kies 2 van de 3' },
+    { t:'Team 7', m:['Dominic','Roy'] },
+    { t:'Team 8', m:['Janairo','Dyllan'], note:'Ook als los team' },
+    { t:'Team 9', m:['Kamil','Deac (Ovidiu)'] },
+    { t:'Team 10', m:['Marvin','Vitaly','Roman'], note:'Kies 2 van de 3' },
+    { t:'Team 11', m:['Marvin','Deac (Ovidiu)'] },
+    { t:'Team 12', m:['Denys','Nazar'] },
+    { t:'Team 13', m:['Denys','Dominic'] },
+    { t:'Team 14', m:['Denys','Roy'] },
+  ];
+
+  const cols = ['Spouw','Dak','Vloer','Bodem','Enverifoam','Wolmachine','Dakafwerk','Aanhanger'];
+  const keys = ['sp','dk','vl','bo','ef','wm','da','ah'];
+
+  let html = '<div style="max-width:1400px;margin:0 auto;">';
+
+  // Kwalificaties tabel
+  html += '<div style="font-size:20px;font-weight:800;color:#4dabf7;margin-bottom:4px;">Uitvoerders & Kwalificaties</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:12px;">JA = zelfstandig · COMB = in combinatie met ervaren uitvoerder · NEE = geen kennis</div>';
+  html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:700px;">';
+  html += '<tr style="border-bottom:2px solid #2a2e42;"><th style="text-align:left;padding:6px 8px;font-size:11px;color:#888;">Uitvoerder</th>';
+  cols.forEach(c => html += `<th style="text-align:center;padding:6px 4px;font-size:10px;color:#e8712a;">${c}</th>`);
+  html += '</tr>';
+  uitvoerders.forEach(u => {
+    html += '<tr style="border-bottom:1px solid #1a1e2e;">';
+    html += `<td style="padding:5px 8px;font-size:11px;color:#fff;font-weight:600;">${u.n}</td>`;
+    keys.forEach(k => {
+      const v = u[k];
+      const col = v==='JA'?'#2ed573':v==='COMB'?'#ffa502':'#444';
+      html += `<td style="text-align:center;padding:5px 4px;font-size:10px;color:${col};font-weight:600;">${v}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</table></div>';
+
+  // Teamcombinaties
+  html += '<div style="font-size:20px;font-weight:800;color:#2ed573;margin:24px 0 4px;">Standaard Teamcombinaties</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:12px;">Kies 2 per team. Andere combinaties mogelijk maar niet standaard.</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;">';
+  teams.forEach(t => {
+    html += `<div style="background:#1a1e2e;border-radius:8px;padding:10px 12px;border-left:3px solid #2ed573;">
+      <div style="font-size:12px;font-weight:700;color:#2ed573;margin-bottom:4px;">${t.t}</div>
+      <div style="font-size:11px;color:#fff;">${t.m.join(' + ')}</div>
+      ${t.note ? '<div style="font-size:9px;color:#888;margin-top:2px;">'+t.note+'</div>' : ''}
+    </div>`;
+  });
+  html += '</div>';
+
+  // OA Capaciteiten
+  html += '<div style="font-size:20px;font-weight:800;color:#f368e0;margin:24px 0 4px;">Onderaannemers — Wie kan wat?</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:12px;">Capaciteiten per onderaannemer</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">';
+  for (const [naam, caps] of Object.entries(OA_CAPS)) {
+    const oa = OA_LOCS.find(o => o.name === naam);
+    html += `<div style="background:#1a1e2e;border-radius:8px;padding:10px 12px;border-left:3px solid ${oa?oa.kleur:'#888'};">
+      <div style="font-size:12px;font-weight:700;color:${oa?oa.kleur:'#fff'};">${naam} <span style="font-size:9px;color:#888;">${oa?oa.plaats:''}</span></div>
+      <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">
+        ${caps.map(c => `<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:#252940;color:#aaa;">${c}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+  html += '</div></div>';
+  p.innerHTML = html;
+}
+
+function buildConfigTab() {
+  const p = document.getElementById('configPanel');
+  if (p.dataset.built) return;
+  p.dataset.built = '1';
+
+  function cfgRow(label, key, unit, hint) {
+    const val = CONFIG[key];
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a1e2e;">
+      <span style="flex:1;font-size:12px;color:#ccc;">${label}</span>
+      <input type="number" step="any" value="${val}" id="cfg_${key}" onchange="CONFIG['${key}']=parseFloat(this.value);saveConfig();onConfigChanged();" style="width:90px;background:#1a1e2e;border:1px solid #2a2e42;border-radius:4px;padding:4px 8px;font-size:12px;color:#4dabf7;text-align:right;outline:none;">
+      <span style="width:60px;font-size:10px;color:#888;">${unit}</span>
+      ${hint ? '<span style="font-size:9px;color:#555;flex:0 0 200px;">'+hint+'</span>' : ''}
+    </div>`;
+  }
+
+  // Normtijden regressie
+  const NORMTIJD_REGR = {
+    'Bodem - Chips': { intercept: 0.6292, slope: 0.02156 },
+    'Bodem - EPS Parels': { intercept: 0.3619, slope: 0.024098 },
+    'Bodem - XXL Parels': { intercept: 0.3619, slope: 0.024098 },
+    'Vloer - PIF Floor': { intercept: 1.3103, slope: 0.032433 },
+    'Vloer - Knauf 035': { intercept: 1.3103, slope: 0.032433 },
+    'Spouw - EPS Parels': { intercept: 1.6247, slope: 0.014639 },
+    'Spouw - Glaswol': { intercept: 3.1577, slope: 0.018825 },
+    'Spouw - EnveriFoam': { intercept: 1.6247, slope: 0.014639 },
+    'Dakis - PIF Roof': { intercept: 3.9773, slope: 0.008247 },
+    'Dakis - Knauf Naturoll': { intercept: 3.9773, slope: 0.008247 },
+    'Dakis - Gramitherm': { intercept: 3.9773, slope: 0.008247 },
+    'Dakis - PIR + Gips': { intercept: 3.9773, slope: 0.008247 },
+    'Dakis - PIR Recticel': { intercept: 3.9773, slope: 0.008247 },
+    'Plafo - Cellulose': { intercept: 1.6351, slope: 0.031072 },
+  };
+
+  let html = '<div style="max-width:1200px;margin:0 auto;">';
+  html += '<div style="font-size:20px;font-weight:800;color:#e8712a;margin-bottom:4px;">Invoerdata & Parameters</div>';
+  html += '<div style="font-size:11px;color:#666;margin-bottom:16px;">Alle waarden die in berekeningen worden gebruikt. Pas aan en herbereken.</div>';
+
+  // Personeelskosten
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:16px 0 8px;">PERSONEELSKOSTEN</div>';
+  html += cfgRow('Uurtarief per persoon', 'uurtarief_pp', '€/uur', 'Bruto excl. BTW');
+  html += cfgRow('Personen per team', 'personen_per_team', 'pers.', 'Standaard 2 uitvoerders');
+  html += `<div style="padding:6px 0;font-size:11px;color:#2ed573;font-weight:600;">→ Teamtarief: €${CONFIG.uurtarief.toFixed(2)}/uur (${CONFIG.personen_per_team} × €${CONFIG.uurtarief_pp})</div>`;
+
+  // Reiskosten
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">REISKOSTEN</div>';
+  html += cfgRow('Rijfactor (hemelsbreed → weg)', 'rijfactor', 'factor', '× hemelsbreed');
+  html += cfgRow('Reissnelheid', 'snelheid', 'km/u', 'Gemiddeld woon-werk');
+  html += cfgRow('Brandstofkosten', 'brandstof_per_km', '€/km', 'Diesel + slijtage');
+
+  // Loodstijd
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">LOODSTIJD</div>';
+  html += cfgRow('Loodstijd per keer', 'loodstijd_uur', 'uur', '45 min laden/briefing');
+  html += `<div style="padding:6px 0;font-size:11px;color:#2ed573;font-weight:600;">→ Loodstijd kosten: €${(2 * CONFIG.loodstijd_uur * CONFIG.uurtarief).toFixed(0)}/dag (2 × ${CONFIG.loodstijd_uur}u × €${CONFIG.uurtarief})</div>`;
+
+  // Commissies
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">COMMISSIES</div>';
+  html += cfgRow('DTD commissie', 'dtd_commissie', '%', '27% bij deur-tot-deur');
+  html += cfgRow('Schouwcommissie (niet-DTD)', 'schouw_commissie', '%', '3,5% bij normale verkoop');
+
+  // Margebuffer
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">MARGEBUFFER</div>';
+  html += cfgRow('Kostenmarge', 'kostenmarge_pct', '%', '5% buffer over kosten');
+
+  // OA
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">OA VERGELIJKING</div>';
+  html += cfgRow('OA kostprijs (gemiddeld)', 'oa_kostprijs_pct', '%', '53,3% — onbetrouwbaar, weinig data');
+
+  // Werkdag
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">WERKDAG PARAMETERS</div>';
+  html += cfgRow('Aanwezigheid uitvoerders', 'start_uur', 'uur', '07:00 op de loods');
+  html += cfgRow('Vertrektijd naar klus', 'vertrek_uur', 'uur', '07:45 na laden/briefing');
+  html += cfgRow('Uiterste terugkomsttijd', 'max_terugkomst', 'uur', 'Teams uiterlijk 17:00 terug');
+  html += cfgRow('Beschikbare werkuren', 'beschikbare_uren', 'uur', '07:45–17:00 = 9u15');
+
+  // Route
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">ROUTE & T-FACTOR</div>';
+  html += cfgRow('T-factor (multi-klus)', 't_factor', 'factor', 'Route-efficiëntie meerdere klussen');
+
+  // Locatie
+  html += '<div style="font-size:14px;font-weight:700;color:#4dabf7;margin:20px 0 8px;">UITVALSBASIS</div>';
+  html += cfgRow('Latitude', 'hw_lat', '°N', 'Halfweg');
+  html += cfgRow('Longitude', 'hw_lon', '°O', 'Halfweg');
+
+  // Materiaalkosten tabel
+  html += '<div style="font-size:14px;font-weight:700;color:#e8712a;margin:24px 0 8px;">MATERIAALKOSTEN PER m² (eigen uitvoer)</div>';
+  html += '<div style="font-size:10px;color:#666;margin-bottom:8px;">Bron: Dagplanner_Invoerdata.xlsx · Gebruikt in dagplanner marge-berekening</div>';
+  html += '<table style="width:100%;border-collapse:collapse;">';
+  html += '<tr style="border-bottom:2px solid #2a2e42;"><th style="text-align:left;padding:6px 8px;font-size:10px;color:#888;">Categorie</th><th style="text-align:left;padding:6px;font-size:10px;color:#888;">Product</th><th style="text-align:left;padding:6px;font-size:10px;color:#888;">Dikte</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">€/m²</th></tr>';
+  if (typeof MAT_PRIJS !== 'undefined') {
+    for (const [cat, diktes] of Object.entries(MAT_PRIJS)) {
+      for (const [dikte, prijs] of Object.entries(diktes)) {
+        html += `<tr style="border-bottom:1px solid #1a1e2e;"><td style="padding:4px 8px;font-size:11px;color:#ccc;">${cat}</td><td style="padding:4px 6px;font-size:11px;color:#aaa;"></td><td style="padding:4px 6px;font-size:11px;color:#aaa;">${dikte}</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#2ed573;font-weight:600;">€${prijs.toFixed(2)}</td></tr>`;
+      }
+    }
+  }
+  html += '</table>';
+
+  // Normtijden
+  html += '<div style="font-size:14px;font-weight:700;color:#e8712a;margin:24px 0 8px;">NORMTIJDEN REGRESSIE</div>';
+  html += '<div style="font-size:10px;color:#666;margin-bottom:8px;">Uren = Intercept + (Slope × m²) · Bron: Normtijden Poster v2 (851 klussen)</div>';
+  html += '<table style="width:100%;border-collapse:collapse;">';
+  html += '<tr style="border-bottom:2px solid #2a2e42;"><th style="text-align:left;padding:6px 8px;font-size:10px;color:#888;">Subcategorie</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">Intercept (u)</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">Slope (u/m²)</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">50m²</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">80m²</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">120m²</th></tr>';
+  for (const [cat, r] of Object.entries(NORMTIJD_REGR)) {
+    const ex50 = (r.intercept + r.slope * 50).toFixed(1);
+    const ex80 = (r.intercept + r.slope * 80).toFixed(1);
+    const ex120 = (r.intercept + r.slope * 120).toFixed(1);
+    html += `<tr style="border-bottom:1px solid #1a1e2e;"><td style="padding:4px 8px;font-size:11px;color:#ccc;">${cat}</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#4dabf7;">${r.intercept}</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#4dabf7;">${r.slope}</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#aaa;">${ex50}u</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#aaa;">${ex80}u</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#aaa;">${ex120}u</td></tr>`;
+  }
+  html += '</table>';
+
+  // Extra werkzaamheden
+  html += '<div style="font-size:14px;font-weight:700;color:#e8712a;margin:24px 0 8px;">EXTRA WERKZAAMHEDEN</div>';
+  html += '<table style="width:100%;border-collapse:collapse;">';
+  html += '<tr style="border-bottom:2px solid #2a2e42;"><th style="text-align:left;padding:6px 8px;font-size:10px;color:#888;">Werkzaamheid</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">Extra uren</th><th style="text-align:right;padding:6px;font-size:10px;color:#888;">Extra materiaal</th><th style="text-align:left;padding:6px;font-size:10px;color:#888;">Toelichting</th></tr>';
+  const extraWerk = [
+    ['Graven fundering geen klei',1,0,'Alleen mankracht'],
+    ['Graven fundering wel klei',1,0,'Alleen mankracht'],
+    ['Gat hakken kruipruimte',0.9,0,'Alleen mankracht'],
+    ['Gat hakken klein',0.2,0,'Alleen mankracht'],
+    ['Verwijderen spouwvervuiling',1.5,0,'Alleen mankracht'],
+    ['Hoogwerker tot 12m',1.3,200,'Huur'],
+    ['Hoogwerker hoger dan 12m',1.3,350,'Huur'],
+    ['Steiger',0.5,100,'Huur'],
+    ['Rachels + gipsplaten dak',3.1,0,'Arbeidsintensief'],
+    ['e-DNA onderzoek',0.5,320,'Inkoop'],
+    ['Klimaatfolie/blazen',0.4,0,'Alleen mankracht'],
+    ['Ventilatierooster',0.3,0,'Alleen mankracht'],
+    ['Woningafscheiding',0.5,0,'Alleen mankracht'],
+    ['Puin afvoeren',1,0,'Alleen mankracht'],
+  ];
+  extraWerk.forEach(([naam, uren, mat, hint]) => {
+    html += `<tr style="border-bottom:1px solid #1a1e2e;"><td style="padding:4px 8px;font-size:11px;color:#ccc;">${naam}</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:#ffa502;">${uren}u</td><td style="text-align:right;padding:4px 6px;font-size:11px;color:${mat>0?'#ff4757':'#444'};">${mat>0?'€'+mat:'—'}</td><td style="padding:4px 6px;font-size:10px;color:#666;">${hint}</td></tr>`;
+  });
+  html += '</table>';
+
+  html += '</div>';
+  p.innerHTML = html;
 }
 
 // =============================================
@@ -1575,10 +2274,16 @@ function wpShortTeam(name) {
   }).join(', ');
 }
 
-// Marge helpers for suggestions
-const WP_UURTARIEF = 75, WP_RIJFACTOR = 1.25, WP_T = 1.75, WP_SNELHEID = 80;
+// =============================================
+// Marge helpers for suggestions — lezen altijd actuele CONFIG
+Object.defineProperties(window, {
+  WP_UURTARIEF: { get() { return CONFIG.uurtarief; } },
+  WP_RIJFACTOR: { get() { return CONFIG.rijfactor; } },
+  WP_T:         { get() { return CONFIG.t_factor; } },
+  WP_SNELHEID:  { get() { return CONFIG.snelheid; } },
+  WP_OA_COST:   { get() { return CONFIG.oa_kostprijs_pct; } },
+});
 const WP_MAT_PCT = {'Bodem':0.22,'Vloer':0.22,'Spouw':0.18,'Dak':0.25,'Plafond':0.20,'':0.21};
-const WP_OA_COST = 0.533;
 
 function wpDistKm(la1,lo1,la2,lo2) { return Math.sqrt((la2-la1)**2*111*111+(lo2-lo1)**2*67*67); }
 
@@ -1647,14 +2352,14 @@ async function wpCalcEigenMarge(omzet, plaats, cat, isDTD, m2, dikte, extraUren,
   const afstand = wpDistKm(HW.lat, HW.lon, coords.la, coords.lo);
   const reisKm = afstand * WP_RIJFACTOR * WP_T * 2;
   const reisUren = reisKm / WP_SNELHEID;
-  const reisKosten = reisKm * 0.20 + reisUren * WP_UURTARIEF;
-  const dtdComm = isDTD ? omzet * 0.27 : 0;
-  const schouwComm = isDTD ? 0 : omzet * 0.035;
+  const reisKosten = reisKm * CONFIG.brandstof_per_km + reisUren * WP_UURTARIEF;
+  const dtdComm = isDTD ? omzet * CONFIG.dtd_commissie : 0;
+  const schouwComm = isDTD ? 0 : omzet * CONFIG.schouw_commissie;
   // Use real normtijden if cat is available
   let normtijd = Math.max(1.5, omzet / 500);
   if (cat && typeof DP_NORMTIJDEN !== 'undefined' && DP_NORMTIJDEN[cat]) {
     const nt = DP_NORMTIJDEN[cat];
-    normtijd = Math.max(0.5, nt.i + nt.s * (m2 || 80));
+    normtijd = Math.max(nt.min || 0.5, nt.i + nt.s * (m2 || 80));
   }
   normtijd += (extraUren || 0);
   const persUitvoer = normtijd * WP_UURTARIEF;
@@ -1668,16 +2373,16 @@ async function wpCalcEigenMarge(omzet, plaats, cat, isDTD, m2, dikte, extraUren,
     materiaal = (m2 || 80) * matPerM2;
   }
   materiaal += (extraKosten || 0);
-  const loodstijd = 2 * 0.75 * WP_UURTARIEF;
-  const kosten5pct = omzet * 0.05;
+  const loodstijd = 2 * CONFIG.loodstijd_uur * WP_UURTARIEF;
+  const kosten5pct = omzet * CONFIG.kostenmarge_pct;
   const marge = omzet - dtdComm - schouwComm - materiaal - persUitvoer - reisKosten - loodstijd - kosten5pct;
   return { marge, margePct: omzet > 0 ? marge/omzet : 0, afstand, reisKosten, normtijd, materiaal };
 }
 
 function wpCalcOaMarge(omzet, isDTD) {
   if (!omzet) return null;
-  const dtdComm = isDTD ? omzet * 0.27 : 0;
-  const schouwComm = isDTD ? 0 : omzet * 0.035;
+  const dtdComm = isDTD ? omzet * CONFIG.dtd_commissie : 0;
+  const schouwComm = isDTD ? 0 : omzet * CONFIG.schouw_commissie;
   const oaKosten = omzet * WP_OA_COST;
   const marge = omzet - dtdComm - schouwComm - oaKosten;
   return { marge, margePct: omzet > 0 ? marge/omzet : 0, afstand: 0, reisKosten: 0 };
@@ -1693,16 +2398,22 @@ async function wpGenerateSuggestions(plaats, omzet, type, isDTD) {
   const teams = [...new Set(PLAN_DATA.filter(p => p.sta === 'G' && p.mw).map(p => p.mw))];
   const today = new Date(2026, 2, 6);
 
-  // OA option
+  // OA option - bepaal beste onderaannemer op basis van afstand
   const oaM = wpCalcOaMarge(omzet, isDTD);
   if (oaM) {
+    let besteOA = OA_LOCS[0];
+    let besteOADist = Infinity;
+    OA_LOCS.forEach(oa => {
+      const d = wpDistKm(coords.la, coords.lo, oa.la, oa.lo);
+      if (d < besteOADist) { besteOADist = d; besteOA = oa; }
+    });
     const oaAfstand = wpDistKm(HW.lat,HW.lon,coords.la,coords.lo);
-    const oaDtdComm = isDTD ? omzet * 0.27 : 0;
-    const oaSchouwComm = isDTD ? 0 : omzet * 0.035;
+    const oaDtdComm = isDTD ? omzet * CONFIG.dtd_commissie : 0;
+    const oaSchouwComm = isDTD ? 0 : omzet * CONFIG.schouw_commissie;
     const oaKosten = omzet * WP_OA_COST;
-    suggestions.push({ type:'oa', team:'Onderaannemer (Zeker Isolatie)', dag:'Flexibel',
+    suggestions.push({ type:'oa', team:'Onderaannemer (' + besteOA.name + ')', dag:'Flexibel',
       marge:oaM.marge, margePct:oaM.margePct, afstand:oaAfstand,
-      detail:'Geen reiskosten eigen team',
+      detail: besteOA.name + ' · ' + besteOADist.toFixed(0) + ' km van klus',
       breakdown: {
         omzet: omzet,
         dtdComm: oaDtdComm,
@@ -1721,7 +2432,7 @@ async function wpGenerateSuggestions(plaats, omzet, type, isDTD) {
     const dateStr = wpFmtDate(checkDate);
 
     for (const team of teams) {
-      if (team === 'Zeker Isolatie') continue;
+      if (OA_LOCS.some(oa => team.toLowerCase().includes(oa.splandid.toLowerCase()) || oa.splandid.toLowerCase().includes(team.toLowerCase()))) continue;
       const teamKlussen = PLAN_DATA.filter(p => p.sta === 'G' && p.mw === team && p.gb && p.gb.split(' ')[0] === dateStr);
       
       let canFit = false, comboBonus = 0, nearbyPl = null;
@@ -1742,10 +2453,10 @@ async function wpGenerateSuggestions(plaats, omzet, type, isDTD) {
       if (canFit) {
         const em = await wpCalcEigenMarge(omzet, plaats, sugCat, isDTD, sugM2, sugDikte, sugExtraUren, sugExtraKosten);
         if (em) {
-          const dtdC = isDTD ? omzet * 0.27 : 0;
-          const schC = isDTD ? 0 : omzet * 0.035;
-          const loodK = 2 * 0.75 * WP_UURTARIEF;
-          const k5pct = omzet * 0.05;
+          const dtdC = isDTD ? omzet * CONFIG.dtd_commissie : 0;
+          const schC = isDTD ? 0 : omzet * CONFIG.schouw_commissie;
+          const loodK = 2 * CONFIG.loodstijd_uur * WP_UURTARIEF;
+          const k5pct = omzet * CONFIG.kostenmarge_pct;
           suggestions.push({
             type: teamKlussen.length === 0 ? 'leeg' : 'combo',
             team: wpShortTeam(team),
@@ -1876,38 +2587,34 @@ function buildPlannerLeft() {
       <button class="plan-go" id="sugBtn" style="margin-top:8px;">🔍 Geef 3 beste opties</button>
     </div>
     <div id="sugResults" style="display:flex;flex-direction:column;gap:6px;"></div>
-    <div class="section-label">Te plannen (${tePlannen.length})</div>
-    <div style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;" id="tpList">
-      ${tePlannen.map(tp => `<div class="tp-card" data-plaats="${tp.pl}" data-omzet="${tp.o}" data-type="${tp.tp}">
-        <div class="tp-naam">${tp.kl}</div>
-        <div class="tp-info">${tp.pl} · ${tp.pc} ${tp.tp ? '· '+tp.tp : ''}</div>
-        ${tp.o ? '<div class="tp-omzet">'+wpEur(tp.o)+'</div>' : ''}
-        ${tp.nt ? '<div style="font-size:9px;color:#ffa502;margin-top:2px;">'+tp.nt+'</div>' : ''}
-      </div>`).join('')}
+    <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>Te plannen (${tePlannen.length})</span>
+      <input type="text" id="tpSearch" placeholder="Zoek klant/plaats..." style="background:#1a1e2e;border:1px solid #2a2e42;border-radius:4px;padding:3px 8px;font-size:10px;color:#fff;width:140px;outline:none;" oninput="filterTePlannen(this.value)">
     </div>
-    <div class="section-label">Team filter</div>
-    <div class="filter-row" id="wpTeamFilters"><div class="filter-pill active" data-team="">Alle</div></div>
+    <div style="display:flex;flex-direction:column;gap:4px;flex:1;overflow-y:auto;padding-right:4px;" id="tpList">
+      ${tePlannen.map(tp => {
+        const heeftOmzet = tp.o > 0;
+        const heeftType = tp.tp && tp.tp.length > 0;
+        return `<div class="tp-card" data-plaats="${tp.pl}" data-omzet="${tp.o}" data-type="${tp.tp}" data-naam="${tp.kl.toLowerCase()}" style="border-left-color:${heeftOmzet && heeftType ? '#2ed573' : !heeftOmzet ? '#ff4757' : '#ffa502'};">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div class="tp-naam">${tp.kl}</div>
+            <div class="tp-info">${tp.pl} · ${tp.pc}</div>
+            <div class="tp-info">${tp.st || ''} ${tp.nr || ''}</div>
+          </div>
+          <div style="text-align:right;">
+            ${heeftOmzet ? '<div class="tp-omzet">'+wpEur(tp.o)+'</div>' : '<div style="font-size:9px;color:#ff4757;">Geen omzet</div>'}
+            ${heeftType ? '<div style="font-size:9px;color:#4dabf7;margin-top:1px;">'+tp.tp+'</div>' : '<div style="font-size:9px;color:#ff4757;">Geen type</div>'}
+            ${tp.m2 > 0 ? '<div style="font-size:9px;color:#888;">'+tp.m2+' m²</div>' : ''}
+          </div>
+        </div>
+        ${tp.nt ? '<div style="font-size:9px;color:#ffa502;margin-top:3px;border-top:1px solid #2a2e42;padding-top:3px;">📝 '+tp.nt+'</div>' : ''}
+      </div>`;}).join('')}
+    </div>
   `;
-
-  // Team filter pills
-  const activeTeams = [...new Set(PLAN_DATA.filter(p=>p.sta==='G'&&p.mw).map(p=>p.mw))].sort();
-  const tf = document.getElementById('wpTeamFilters');
-  activeTeams.forEach(t => {
-    const pill = document.createElement('div');
-    pill.className = 'filter-pill'; pill.dataset.team = t;
-    pill.textContent = wpShortTeam(t); tf.appendChild(pill);
-  });
 
   // Events
   document.getElementById('sugBtn').addEventListener('click', wpRunSuggestion);
-  document.querySelectorAll('#wpTeamFilters .filter-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('#wpTeamFilters .filter-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      wpTeamFilter = pill.dataset.team || null;
-      buildPlannerMain();
-    });
-  });
   document.querySelectorAll('.tp-card').forEach(card => {
     card.addEventListener('click', () => {
       document.getElementById('sugPlaats').value = card.dataset.plaats;
@@ -1950,19 +2657,19 @@ async function wpRunSuggestion() {
     const isOA = s.type === 'oa';
     const bdRows = isOA ? `
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Omzet</span><span style="color:#fff;font-weight:700;">${wpEur(b.omzet)}</span></div>
-        ${b.dtdComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>DTD commissie (27%)</span><span style="color:#ff4757;">-${wpEur(b.dtdComm)}</span></div>` : ''}
-        ${b.schouwComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Schouwcommissie (3,5%)</span><span style="color:#ff4757;">-${wpEur(b.schouwComm)}</span></div>` : ''}
-        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>OA kosten (53,3%)</span><span style="color:#ff4757;">-${wpEur(b.oaKosten)}</span></div>
+        ${b.dtdComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>DTD commissie (${(CONFIG.dtd_commissie*100).toFixed(0)}%)</span><span style="color:#ff4757;">-${wpEur(b.dtdComm)}</span></div>` : ''}
+        ${b.schouwComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Schouwcommissie (${(CONFIG.schouw_commissie*100).toFixed(1)}%)</span><span style="color:#ff4757;">-${wpEur(b.schouwComm)}</span></div>` : ''}
+        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>OA kosten (${(CONFIG.oa_kostprijs_pct*100).toFixed(1)}%)</span><span style="color:#ff4757;">-${wpEur(b.oaKosten)}</span></div>
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Geen reis/loods/personeel</span><span style="color:#2ed573;">€0</span></div>
       ` : `
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Omzet</span><span style="color:#fff;font-weight:700;">${wpEur(b.omzet)}</span></div>
-        ${b.dtdComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>DTD commissie (27%)</span><span style="color:#ff4757;">-${wpEur(b.dtdComm)}</span></div>` : ''}
-        ${b.schouwComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Schouwcommissie (3,5%)</span><span style="color:#ff4757;">-${wpEur(b.schouwComm)}</span></div>` : ''}
+        ${b.dtdComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>DTD commissie (${(CONFIG.dtd_commissie*100).toFixed(0)}%)</span><span style="color:#ff4757;">-${wpEur(b.dtdComm)}</span></div>` : ''}
+        ${b.schouwComm > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Schouwcommissie (${(CONFIG.schouw_commissie*100).toFixed(1)}%)</span><span style="color:#ff4757;">-${wpEur(b.schouwComm)}</span></div>` : ''}
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Materiaal</span><span style="color:#ff4757;">-${wpEur(b.materiaal)}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Personeel (${(b.normtijd||0).toFixed(1)}u × €75)</span><span style="color:#ff4757;">-${wpEur(b.persUitvoer)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Personeel (${(b.normtijd||0).toFixed(1)}u × €${CONFIG.uurtarief})</span><span style="color:#ff4757;">-${wpEur(b.persUitvoer)}</span></div>
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Reiskosten</span><span style="color:#ff4757;">-${wpEur(b.reisKosten)}</span></div>
         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Loodstijd</span><span style="color:#ff4757;">-${wpEur(b.loodstijd)}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Kostenmarge (5%)</span><span style="color:#ff4757;">-${wpEur(b.kosten5pct)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Kostenmarge (${(CONFIG.kostenmarge_pct*100).toFixed(0)}%)</span><span style="color:#ff4757;">-${wpEur(b.kosten5pct)}</span></div>
         ${b.comboBonus > 0 ? `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Combo-bonus nabijheid</span><span style="color:#2ed573;">+${wpEur(b.comboBonus)}</span></div>` : ''}
       `;
     return `<div class="sug-card ${isBest ? 'best' : ''}">
@@ -2038,7 +2745,7 @@ function analyzeKlusOptimality(klus, person, dayKlussen, allPersonRows) {
       const startNewKlus = otherEnd + travelHours;
       const endNewKlus = startNewKlus + klusDuur;
       const travelBack = wpDistKm(coords.la, coords.lo, HW.lat, HW.lon) * WP_RIJFACTOR / WP_SNELHEID;
-      const endDay = endNewKlus + travelBack + 0.75; // + loods
+      const endDay = endNewKlus + travelBack + CONFIG.loodstijd_uur; // + loods
       
       if (endDay > 18) continue; // PAST NIET — skip
       
@@ -2048,7 +2755,7 @@ function analyzeKlusOptimality(klus, person, dayKlussen, allPersonRows) {
       
       // Calculate saved marge
       const savedKm = afstand * WP_RIJFACTOR * WP_T;
-      const savedMarge = savedKm * 0.20 + (savedKm / WP_SNELHEID) * WP_UURTARIEF;
+      const savedMarge = savedKm * CONFIG.brandstof_per_km + (savedKm / WP_SNELHEID) * WP_UURTARIEF;
       const comboMarge = eigenM.marge + savedMarge * 0.5;
       
       if (!bestCombo || comboMarge > bestCombo.marge) {
@@ -2105,35 +2812,45 @@ function showKlusPopup(idx) {
   if (k.o > 0) {
     const co = wpGetCityCoords(k.pl);
     const dist = co ? wpDistKm(HW.lat, HW.lon, co.la, co.lo) : 0;
-    const reisKm = dist * 1.25 * 1.75 * 2;
-    const reisUren = reisKm / 80;
-    const reisKosten = reisKm * 0.20;
-    const persReis = reisUren * 75;
+    const reisKm = dist * CONFIG.rijfactor * CONFIG.t_factor * 2;
+    const reisUren = reisKm / CONFIG.snelheid;
+    const reisKosten = reisKm * CONFIG.brandstof_per_km;
+    const persReis = reisUren * CONFIG.uurtarief;
     const matPct = k.tp === 'Spouw' ? 0.22 : k.tp === 'Dak' ? 0.30 : 0.25;
     const materiaal = k.o * matPct;
-    const schouwComm = k.o * 0.035;
+    const schouwComm = k.o * CONFIG.schouw_commissie;
     const normtijd = Math.max(1.5, k.o / 500);
-    const persUitvoer = normtijd * 75;
-    const loodstijd = 2 * 0.75 * 75;
-    const kosten5 = k.o * 0.05;
+    const persUitvoer = normtijd * CONFIG.uurtarief;
+    const loodstijd = 2 * CONFIG.loodstijd_uur * CONFIG.uurtarief;
+    const kosten5 = k.o * CONFIG.kostenmarge_pct;
     const eigMarge = k.o - schouwComm - materiaal - persUitvoer - persReis - reisKosten - loodstijd - kosten5;
     const eigPct = (eigMarge / k.o * 100).toFixed(1);
     
-    // OA marge
-    const oaKosten = k.o * 0.533;
+    // OA marge + beste OA bepalen
+    const oaKosten = k.o * CONFIG.oa_kostprijs_pct;
     const oaMarge = k.o - schouwComm - oaKosten;
     const oaPct = (oaMarge / k.o * 100).toFixed(1);
     const oaBeter = oaMarge > eigMarge;
-    
+
+    // Bepaal alle onderaannemers met afstand, gesorteerd op afstand
+    let oaRanking = [];
+    if (co) {
+      oaRanking = OA_LOCS.map(oa => ({
+        ...oa,
+        dist: wpDistKm(co.la, co.lo, oa.la, oa.lo)
+      })).sort((a,b) => a.dist - b.dist);
+    }
+    const besteOA = oaRanking.length > 0 ? oaRanking[0] : null;
+
     margeHtml = `
       <div class="gp-row"><span class="gp-label">Omzet</span><span class="gp-val">${wpEur(k.o)}</span></div>
-      <div class="gp-row"><span class="gp-label">Schouwcommissie (3,5%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(schouwComm)}</span></div>
+      <div class="gp-row"><span class="gp-label">Schouwcommissie (${(CONFIG.schouw_commissie*100).toFixed(1)}%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(schouwComm)}</span></div>
       <div class="gp-row"><span class="gp-label">Materiaal (~${Math.round(matPct*100)}%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(materiaal)}</span></div>
-      <div class="gp-row"><span class="gp-label">Personeel uitvoer (~${normtijd.toFixed(1)}u × €75)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(persUitvoer)}</span></div>
-      <div class="gp-row"><span class="gp-label">Personeel reis (${reisUren.toFixed(1)}u × €75)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(persReis)}</span></div>
-      <div class="gp-row"><span class="gp-label">Brandstof (${reisKm.toFixed(0)} km)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(reisKosten)}</span></div>
-      <div class="gp-row"><span class="gp-label">Loodstijd</span><span class="gp-val" style="color:#ff4757;">-${wpEur(loodstijd)}</span></div>
-      <div class="gp-row"><span class="gp-label">Kostenmarge (5%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(kosten5)}</span></div>
+      <div class="gp-row"><span class="gp-label">Personeel uitvoer (~${normtijd.toFixed(1)}u × €${CONFIG.uurtarief})</span><span class="gp-val" style="color:#ff4757;">-${wpEur(persUitvoer)}</span></div>
+      <div class="gp-row"><span class="gp-label">Personeel reis (${reisUren.toFixed(1)}u × €${CONFIG.uurtarief})</span><span class="gp-val" style="color:#ff4757;">-${wpEur(persReis)}</span></div>
+      <div class="gp-row"><span class="gp-label">Brandstof (${reisKm.toFixed(0)} km × €${CONFIG.brandstof_per_km})</span><span class="gp-val" style="color:#ff4757;">-${wpEur(reisKosten)}</span></div>
+      <div class="gp-row"><span class="gp-label">Loodstijd (2×${CONFIG.loodstijd_uur}u)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(loodstijd)}</span></div>
+      <div class="gp-row"><span class="gp-label">Kostenmarge (${(CONFIG.kostenmarge_pct*100).toFixed(0)}%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(kosten5)}</span></div>
       <div style="border-top:1px solid #3a3e52;margin-top:6px;padding-top:6px;">
         <div class="gp-row"><span class="gp-label" style="font-weight:700;color:#fff;">Geschatte marge (eigen)</span><span class="gp-val" style="color:${eigMarge>=0?'#2ed573':'#ff4757'};font-size:15px;">${wpEur(eigMarge)} (${eigPct}%)</span></div>
       </div>
@@ -2143,12 +2860,26 @@ function showKlusPopup(idx) {
     oaHtml = `
       <div style="border-top:2px solid #f368e0;margin-top:10px;padding-top:8px;">
         <div style="font-size:11px;font-weight:700;color:#f368e0;margin-bottom:6px;">ONDERAANNEMER VERGELIJKING</div>
-        <div class="gp-row"><span class="gp-label">OA kosten (53,3%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(oaKosten)}</span></div>
+        <div class="gp-row"><span class="gp-label">OA kosten (gem. ${(CONFIG.oa_kostprijs_pct*100).toFixed(1)}%)</span><span class="gp-val" style="color:#ff4757;">-${wpEur(oaKosten)}</span></div>
         <div class="gp-row"><span class="gp-label">Schouwcommissie</span><span class="gp-val" style="color:#ff4757;">-${wpEur(schouwComm)}</span></div>
         <div class="gp-row"><span class="gp-label" style="font-weight:700;color:#f368e0;">Marge via OA</span><span class="gp-val" style="color:#f368e0;">${wpEur(oaMarge)} (${oaPct}%)</span></div>
         <div style="margin-top:6px;padding:6px 8px;border-radius:6px;background:${oaBeter?'rgba(255,71,87,0.15)':'rgba(46,213,115,0.15)'};">
           <div style="font-size:11px;font-weight:700;color:${oaBeter?'#ff4757':'#2ed573'};">${oaBeter?'⚠ OA levert €'+Math.round(oaMarge-eigMarge)+' MEER marge':'✓ Eigen uitvoering is rendabeler (+€'+Math.round(eigMarge-oaMarge)+')'}</div>
         </div>
+        ${oaRanking.length > 0 ? `
+        <div style="margin-top:8px;">
+          <div style="font-size:10px;font-weight:700;color:#f368e0;margin-bottom:6px;">★ BESTE ONDERAANNEMER (op afstand)</div>
+          ${oaRanking.map((oa, i) => `
+            <div style="padding:6px 8px;border-radius:6px;background:#252940;border-left:3px solid ${oa.kleur};margin-bottom:4px;${i===0?'border:1px solid '+oa.kleur+';':'opacity:0.7;'}">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11px;font-weight:700;color:${oa.kleur};">${i===0?'★ ':''}<span style="color:${oa.kleur}">${oa.name}</span></span>
+                <span style="font-size:10px;color:#4dabf7;font-weight:600;">${oa.dist.toFixed(0)} km</span>
+              </div>
+              <div style="font-size:9px;color:#888;">${oa.plaats}</div>
+            </div>
+          `).join('')}
+          <div style="font-size:9px;color:#666;margin-top:4px;">Afstand HW→klus (eigen team): ${dist.toFixed(0)} km</div>
+        </div>` : ''}
       </div>
     `;
     
@@ -2173,14 +2904,14 @@ function showKlusPopup(idx) {
             if (cDist > 25) continue;
             const otEnd = parseTimeToHours(wpParseTime(ot.ge));
             if (!otEnd) continue;
-            const travelH = cDist*1.25/80;
+            const travelH = cDist*CONFIG.rijfactor/CONFIG.snelheid;
             const endNew = otEnd + travelH + normtijd;
-            const backH = wpDistKm(co.la,co.lo,HW.lat,HW.lon)*1.25/80;
-            if (endNew + backH + 0.75 > 18) continue;
+            const backH = wpDistKm(co.la,co.lo,HW.lat,HW.lon)*CONFIG.rijfactor/CONFIG.snelheid;
+            if (endNew + backH + CONFIG.loodstijd_uur > 18) continue;
             const teamDayOt = PLAN_DATA.filter(p=>p.sta==='G'&&p.mw===ot.mw&&p.gb&&p.gb.split(' ')[0]===ds);
             if (teamDayOt.length >= 2) continue;
-            const savedKm = dist*1.25*1.75;
-            const saved = savedKm*0.20 + (savedKm/80)*75;
+            const savedKm = dist*CONFIG.rijfactor*CONFIG.t_factor;
+            const saved = savedKm*CONFIG.brandstof_per_km + (savedKm/CONFIG.snelheid)*CONFIG.uurtarief;
             if (!bestCombo || saved > bestCombo.saved) {
               bestCombo = {
                 saved, plaats:ot.pl, team:ot.mw, cDist,
@@ -2284,7 +3015,7 @@ function buildPlannerMain() {
     'Gokhan Ozdemir','Giovani Dammers',
     'Alain Dennis Esveld','Andriy Protsiuk',
     'Robin Samson-It',
-    'Zeker Isolatie',
+    ...OA_LOCS.map(oa => oa.splandid),
   ];
 
   // Explode klussen per individual person
@@ -2364,7 +3095,7 @@ function buildPlannerMain() {
       const endTime = wpParseTime(k.ge);
       const left = (timeToFrac(startTime) * 100).toFixed(2);
       const width = ((timeToFrac(endTime) - timeToFrac(startTime)) * 100).toFixed(2);
-      const isOA = k.mw && k.mw.toLowerCase().includes('zeker');
+      const isOA = k.mw && OA_LOCS.some(oa => k.mw.toLowerCase().includes(oa.splandid.toLowerCase()) || oa.splandid.toLowerCase().includes(k.mw.toLowerCase()));
       const bg = barColor(k.tp, isOA);
       
       // Store klus for popup
@@ -2378,12 +3109,12 @@ function buildPlannerMain() {
           const co = wpGetCityCoords(k.pl);
           if (co) {
             const dist = wpDistKm(HW.lat, HW.lon, co.la, co.lo);
-            // OA check: OA marge = omzet * 0.432 (niet-DTD)
-            const oaM = k.o * 0.432;
-            // Eigen rough: omzet * 0.665 - normtijd*75 - reiskosten
-            const reisKm = dist * 1.25 * 1.75 * 2;
-            const reisK = reisKm * 0.20 + (reisKm/80)*75;
-            const eigM = k.o * 0.665 - 3*75 - reisK - 2*0.75*75;
+            // OA check: OA marge = omzet * (1 - schouw - oa_pct)
+            const oaM = k.o * (1 - CONFIG.schouw_commissie - CONFIG.oa_kostprijs_pct);
+            // Eigen rough: omzet minus kosten
+            const reisKm = dist * CONFIG.rijfactor * CONFIG.t_factor * 2;
+            const reisK = reisKm * CONFIG.brandstof_per_km + (reisKm/CONFIG.snelheid)*CONFIG.uurtarief;
+            const eigM = k.o * (1 - CONFIG.schouw_commissie) - 3*CONFIG.uurtarief - reisK - 2*CONFIG.loodstijd_uur*CONFIG.uurtarief;
             if (oaM > eigM + 50) isSubopt = true; // OA significantly better
             // Solo far trip
             const teamDayK = dayKlussen.filter(dk => dk.mw === k.mw);
@@ -2405,7 +3136,7 @@ function buildPlannerMain() {
       : person;
     const hasKlus = klussen.length > 0;
     const nameStyle = hasKlus ? 'color:#bbb;' : 'color:#444;';
-    const icon = person === 'Zeker Isolatie' ? '🏢' : '👤';
+    const icon = OA_LOCS.some(oa => oa.splandid === person) ? '🏢' : '👤';
     
     rowsHtml += `<tr>
       <td class="name-cell" title="${person}" style="${nameStyle}">${icon} ${shortName}</td>
